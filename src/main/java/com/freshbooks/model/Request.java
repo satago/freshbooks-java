@@ -26,6 +26,11 @@ public class Request extends Message {
     @XStreamAlias("date_to")
     Date dateTo;
     
+    @XStreamAlias("subject")
+    String emailSubject;
+    
+    @XStreamAlias("message")
+    String emailMessage;
     
     public Request() {
     }
@@ -42,6 +47,7 @@ public class Request extends Message {
             break;
         case INVOICE_DELETE:
         case INVOICE_GET:
+        case INVOICE_SEND_BY_EMAIL:
             this.invoiceId = id;
             break;
         case PAYMENT_DELETE:
@@ -71,6 +77,18 @@ public class Request extends Message {
         default:
             throw new UnsupportedOperationException("Don't know what to do with an id for method "+method);
         }
+    }
+    public Request(RequestMethod method, Long invoiceId, String emailSubject, String emailMessage) {
+        this(method.id);
+        switch(method) {
+        case INVOICE_SEND_BY_EMAIL:
+            this.invoiceId = invoiceId;
+            this.emailSubject = emailSubject;
+            this.emailMessage = emailMessage;
+            break;
+        default:
+            throw new UnsupportedOperationException("Don't know what to do with an id for method "+method);
+        }        
     }
     public Request(RequestMethod method, Client client) {
         this(method.id);

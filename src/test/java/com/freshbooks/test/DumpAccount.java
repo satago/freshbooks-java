@@ -6,6 +6,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import com.freshbooks.ApiConnection;
 import com.freshbooks.ApiException;
@@ -30,7 +31,7 @@ public class DumpAccount {
         String url = args[0];
         String key = args[1];
         try {
-            ApiConnection con = new ApiConnection(new URL(url), key, "FreshBooks Java API Client Test");
+            ApiConnection con = new ApiConnection(new URL(url), key, "FreshBooks Java API Client Test",TimeZone.getTimeZone("EST5EDT"));
             con.setDebug(true);
             try {
                 for(Client client : con.listClients(null, null, null)) {

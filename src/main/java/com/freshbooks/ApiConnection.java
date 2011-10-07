@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.TimeZone;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -50,13 +51,21 @@ public class ApiConnection {
     transient HttpClient client;
     boolean debug;
     
+    /**
+     * The time zone in which the FreshBooks servers are. 
+     */
+    private TimeZone freshBooksTimeZone;
+    
+    
     protected ApiConnection() {
         
     }
-    public ApiConnection(URL apiUrl, String key, String userAgent) {
+    
+    public ApiConnection(URL apiUrl, String key, String userAgent, TimeZone freshBooksTimeZone) {
         this.url = apiUrl;
         this.key = key;
         this.userAgent = userAgent;
+        this.freshBooksTimeZone = freshBooksTimeZone;
     }
 
     private HttpClient getClient() {
@@ -94,11 +103,12 @@ public class ApiConnection {
      */
     protected Response performRequest(Request request) throws ApiException, IOException {
         try {
-            XStream xs = new CustomXStream();
+            XStream xs = new CustomXStream(this.freshBooksTimeZone);
             
             checkRequestAndOmitFields(request, xs);
             
             String paramString = xs.toXML(request);
+
             PostMethod method = new PostMethod(url.toString());
             try {
                 method.setContentChunked(false);
@@ -120,8 +130,15 @@ public class ApiConnection {
                     is = new ByteArrayInputStream(bytes);
                 }
                 try {
-                    Response response = (Response)xs.fromXML(is);
+                	
+                	  
+                    Response response = (Response) xs.fromXML(is);
+//                    System.out.println("------BEGIN RESPONSE------");
+//                    System.out.println(xs.toXML(response));
+//                    System.out.println("-------END RESPONSE-------");
+                    
                     // TODO Throw an error if we got one
+
                     if(response.isFail()) {
                         throw new ApiException(response.getError());
                     }
@@ -692,6 +709,14 @@ public class ApiConnection {
 	public void sendInvoiceByEmail(Long invoiceId) throws ApiException, IOException {
 		performRequest(new Request(RequestMethod.INVOICE_SEND_BY_EMAIL, invoiceId));
 	}
+	
+	/**
+	 * Sends an invoice by email with custom subject and message 
+	 */
+	public void sendInvoiceByEmail(Long invoiceId, String emailSubject, String emailMessage) throws ApiException, IOException {
+		performRequest(new Request(RequestMethod.INVOICE_SEND_BY_EMAIL, invoiceId, emailSubject, emailMessage));
+	}
+
 	
 	/**
 	 * Sends an invoice by email

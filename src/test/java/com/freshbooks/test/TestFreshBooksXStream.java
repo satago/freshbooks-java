@@ -23,7 +23,7 @@ public class TestFreshBooksXStream extends Assert {
 
     @Test
     public void loadSaveInvoice1() {
-        XStream xs = new CustomXStream();
+        XStream xs = new CustomXStream(Calendar.getInstance().getTimeZone());
         Response response = (Response)xs.fromXML(getClass().getResourceAsStream("test_invoice_response_1.xml"));
         String str = xs.toXML(response);
         System.out.println(str);
@@ -35,7 +35,7 @@ public class TestFreshBooksXStream extends Assert {
      */
     @Test
     public void loadSaveInvoiceWithExtraTags1() {
-        XStream xs = new CustomXStream();
+        XStream xs = new CustomXStream(Calendar.getInstance().getTimeZone());
         InputStream stream = getClass().getResourceAsStream("test_invoice_response_extra_tags_1.xml");
         assertNotNull(stream);
 		Response response = (Response)xs.fromXML(stream);
@@ -45,7 +45,7 @@ public class TestFreshBooksXStream extends Assert {
     
     @Test
     public void loadSaveClient() {
-        XStream xs = new CustomXStream();
+        XStream xs = new CustomXStream(Calendar.getInstance().getTimeZone());
         Request request = (Request)xs.fromXML(getClass().getResourceAsStream("test_client_create_request_2.xml"));
         String str = xs.toXML(request);
         System.out.println(str);
@@ -67,7 +67,7 @@ public class TestFreshBooksXStream extends Assert {
     
     @Test
     public void loadSaveClientList() {
-        XStream xs = new CustomXStream();
+        XStream xs = new CustomXStream(Calendar.getInstance().getTimeZone());
         Response response = (Response)xs.fromXML(getClass().getResourceAsStream("test_client_list_response_1.xml"));
         String str = xs.toXML(response);
         System.out.println(str);
@@ -86,7 +86,7 @@ public class TestFreshBooksXStream extends Assert {
     }
     @Test
     public void loadSaveInvoiceList() {
-        XStream xs = new CustomXStream();
+        XStream xs = new CustomXStream(Calendar.getInstance().getTimeZone());
         Response response = (Response)xs.fromXML(getClass().getResourceAsStream("test_invoice_list_response_1.xml"));
         String str = xs.toXML(response);
         System.out.println(str);
@@ -116,7 +116,7 @@ public class TestFreshBooksXStream extends Assert {
     
     @Test
     public void loadSaveExpenseList() {
-        XStream xs = new CustomXStream();
+        XStream xs = new CustomXStream(Calendar.getInstance().getTimeZone());
         Response response = (Response)xs.fromXML(getClass().getResourceAsStream("test_expense_list_response_1.xml"));
         String str = xs.toXML(response);
         System.out.println(str);
