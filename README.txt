@@ -1,1 +1,1 @@
-Git clone of http://freshbooks-api-java-client.googlecode.com/svn
+A fork freely based on https://github.com/gommo/freshbooks-java
