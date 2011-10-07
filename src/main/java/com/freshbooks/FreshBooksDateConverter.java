@@ -15,15 +15,6 @@ import com.thoughtworks.xstream.core.util.ThreadSafeSimpleDateFormat;
  * Takes care of FreshBooks date idiosyncrasies.
  * See this for more info:
  * http://community.freshbooks.com/forums/viewtopic.php?id=5047
- * <p>
- * Goshme Soluções para a Internet LTDA<br />
- * Projeto JusBrasil -
- * <a href="http://www.jusbrasil.com.br/">http://www.jusbrasil.com.br/</a>
- * </p>
- * @since 29/09/2011 10:29:36
- * @version CVS $Revision$
- * @author Anderson Caco Marques Ferraz -
- * <a href="mailto:caco@jusbrasil.com.br>caco@jusbrasil.com.br</a>
  */
 public class FreshBooksDateConverter extends AbstractSingleValueConverter {
 

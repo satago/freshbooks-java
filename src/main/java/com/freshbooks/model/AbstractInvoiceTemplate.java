@@ -7,17 +7,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * Concentrates properties and methods common both to Invoice and Recurring
- * 
- * <p>
- * Goshme Soluções para a Internet LTDA<br />
- * Projeto JusBrasil - <a
- * href="http://www.jusbrasil.com.br/">http://www.jusbrasil.com.br/</a>
- * </p>
- * 
- * @since 26/09/2011 14:41:28
- * @version CVS $Revision$
- * @author Anderson Caco Marques Ferraz - <a
- *         href="mailto:caco@jusbrasil.com.br>caco@jusbrasil.com.br</a>
  */
 public abstract class AbstractInvoiceTemplate {
 
