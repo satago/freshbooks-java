@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite failures="0" time="1.05" errors="0" skipped="0" tests="6" name="com.freshbooks.test.TestFreshBooksXStream">
+  <properties>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-6-openjdk/jre/lib/amd64"/>
+    <property name="java.vm.version" value="20.0-b11"/>
+    <property name="java.vm.vendor" value="Sun Microsystems Inc."/>
+    <property name="java.vendor.url" value="http://java.sun.com/"/>
+    <property name="path.separator" value=":"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="user.country" value="BR"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/home/caco/git/freshbooks-java"/>
+    <property name="java.runtime.version" value="1.6.0_22-b22"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
+    <property name="basedir" value="/home/caco/git/freshbooks-java"/>
+    <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-6-openjdk/jre/lib/endorsed"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="surefire.real.class.path" value="/tmp/surefirebooter5734859027131689127.jar"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.specification.vendor" value="Sun Microsystems Inc."/>
+    <property name="os.name" value="Linux"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/lib/jvm/java-6-openjdk/jre/lib/amd64/server:/usr/lib/jvm/java-6-openjdk/jre/lib/amd64:/usr/lib/jvm/java-6-openjdk/jre/../lib/amd64:/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"/>
+    <property name="surefire.test.class.path" value="/home/caco/git/freshbooks-java/target/test-classes:/home/caco/git/freshbooks-java/target/classes:/home/caco/.m2/repository/commons-codec/commons-codec/1.3/commons-codec-1.3.jar:/home/caco/.m2/repository/commons-io/commons-io/2.0.1/commons-io-2.0.1.jar:/home/caco/.m2/repository/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar:/home/caco/.m2/repository/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar:/home/caco/.m2/repository/org/apache/commons/commons-lang3/3.0.1/commons-lang3-3.0.1.jar:/home/caco/.m2/repository/com/thoughtworks/xstream/xstream/1.3/xstream-1.3.jar:/home/caco/.m2/repository/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar:/home/caco/.m2/repository/org/slf4j/slf4j-jdk14/1.5.8/slf4j-jdk14-1.5.8.jar:/home/caco/.m2/repository/org/slf4j/slf4j-api/1.5.8/slf4j-api-1.5.8.jar:/home/caco/.m2/repository/junit/junit/4.7/junit-4.7.jar:"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="50.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.version" value="2.6.38-11-generic"/>
+    <property name="user.home" value="/home/caco"/>
+    <property name="user.timezone" value="America/Bahia"/>
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.specification.version" value="1.6"/>
+    <property name="user.name" value="caco"/>
+    <property name="java.class.path" value="/home/caco/git/freshbooks-java/target/test-classes:/home/caco/git/freshbooks-java/target/classes:/home/caco/.m2/repository/commons-codec/commons-codec/1.3/commons-codec-1.3.jar:/home/caco/.m2/repository/commons-io/commons-io/2.0.1/commons-io-2.0.1.jar:/home/caco/.m2/repository/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar:/home/caco/.m2/repository/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar:/home/caco/.m2/repository/org/apache/commons/commons-lang3/3.0.1/commons-lang3-3.0.1.jar:/home/caco/.m2/repository/com/thoughtworks/xstream/xstream/1.3/xstream-1.3.jar:/home/caco/.m2/repository/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar:/home/caco/.m2/repository/org/slf4j/slf4j-jdk14/1.5.8/slf4j-jdk14-1.5.8.jar:/home/caco/.m2/repository/org/slf4j/slf4j-api/1.5.8/slf4j-api-1.5.8.jar:/home/caco/.m2/repository/junit/junit/4.7/junit-4.7.jar:"/>
+    <property name="java.vm.specification.version" value="1.0"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="/usr/lib/jvm/java-6-openjdk/jre"/>
+    <property name="sun.java.command" value="/tmp/surefirebooter5734859027131689127.jar /tmp/surefire5086710231847984612tmp /tmp/surefire7117961062917699964tmp"/>
+    <property name="java.specification.vendor" value="Sun Microsystems Inc."/>
+    <property name="user.language" value="pt"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.6.0_22"/>
+    <property name="java.ext.dirs" value="/usr/lib/jvm/java-6-openjdk/jre/lib/ext:/usr/java/packages/lib/ext"/>
+    <property name="sun.boot.class.path" value="/usr/lib/jvm/java-6-openjdk/jre/lib/resources.jar:/usr/lib/jvm/java-6-openjdk/jre/lib/rt.jar:/usr/lib/jvm/java-6-openjdk/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-6-openjdk/jre/lib/jsse.jar:/usr/lib/jvm/java-6-openjdk/jre/lib/jce.jar:/usr/lib/jvm/java-6-openjdk/jre/lib/charsets.jar:/usr/lib/jvm/java-6-openjdk/jre/lib/netx.jar:/usr/lib/jvm/java-6-openjdk/jre/lib/plugin.jar:/usr/lib/jvm/java-6-openjdk/jre/lib/rhino.jar:/usr/lib/jvm/java-6-openjdk/jre/lib/modules/jdk.boot.jar:/usr/lib/jvm/java-6-openjdk/jre/classes"/>
+    <property name="java.vendor" value="Sun Microsystems Inc."/>
+    <property name="localRepository" value="/home/caco/.m2/repository"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.vendor.url.bug" value="http://java.sun.com/cgi-bin/bugreport.cgi"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="sun.desktop" value="gnome"/>
+    <property name="sun.cpu.isalist" value=""/>
+  </properties>
+  <testcase time="0.719" classname="com.freshbooks.test.TestFreshBooksXStream" name="loadSaveInvoice1"/>
+  <testcase time="0.044" classname="com.freshbooks.test.TestFreshBooksXStream" name="loadSaveInvoiceWithExtraTags1"/>
+  <testcase time="0.049" classname="com.freshbooks.test.TestFreshBooksXStream" name="loadSaveClient"/>
+  <testcase time="0.075" classname="com.freshbooks.test.TestFreshBooksXStream" name="loadSaveClientList"/>
+  <testcase time="0.04" classname="com.freshbooks.test.TestFreshBooksXStream" name="loadSaveInvoiceList"/>
+  <testcase time="0.028" classname="com.freshbooks.test.TestFreshBooksXStream" name="loadSaveExpenseList"/>
+</testsuite>
