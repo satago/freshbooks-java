@@ -26,7 +26,7 @@ public class TestFreshBooksXStream extends Assert {
         XStream xs = new CustomXStream(Calendar.getInstance().getTimeZone());
         Response response = (Response)xs.fromXML(getClass().getResourceAsStream("test_invoice_response_1.xml"));
         String str = xs.toXML(response);
-        System.out.println(str);
+//        System.out.println(str);
     }
     
     /**
@@ -40,7 +40,7 @@ public class TestFreshBooksXStream extends Assert {
         assertNotNull(stream);
 		Response response = (Response)xs.fromXML(stream);
         String str = xs.toXML(response);
-        System.out.println(str);
+//        System.out.println(str);
     }
     
     @Test
@@ -48,7 +48,7 @@ public class TestFreshBooksXStream extends Assert {
         XStream xs = new CustomXStream(Calendar.getInstance().getTimeZone());
         Request request = (Request)xs.fromXML(getClass().getResourceAsStream("test_client_create_request_2.xml"));
         String str = xs.toXML(request);
-        System.out.println(str);
+//        System.out.println(str);
         Client c = request.getClient();
         assertEquals("Jane", c.getFirstName());
         assertEquals("Doe", c.getLastName());
@@ -70,7 +70,7 @@ public class TestFreshBooksXStream extends Assert {
         XStream xs = new CustomXStream(Calendar.getInstance().getTimeZone());
         Response response = (Response)xs.fromXML(getClass().getResourceAsStream("test_client_list_response_1.xml"));
         String str = xs.toXML(response);
-        System.out.println(str);
+//        System.out.println(str);
         Clients clients = response.getClients();
         assertEquals(1, clients.getPage());
         assertEquals(15, clients.getPerPage());
@@ -89,7 +89,7 @@ public class TestFreshBooksXStream extends Assert {
         XStream xs = new CustomXStream(Calendar.getInstance().getTimeZone());
         Response response = (Response)xs.fromXML(getClass().getResourceAsStream("test_invoice_list_response_1.xml"));
         String str = xs.toXML(response);
-        System.out.println(str);
+//        System.out.println(str);
         Invoices invoices = response.getInvoices();
         assertEquals(2, invoices.getContents().size());
         Invoice i1 = invoices.get(0);
@@ -119,7 +119,7 @@ public class TestFreshBooksXStream extends Assert {
         XStream xs = new CustomXStream(Calendar.getInstance().getTimeZone());
         Response response = (Response)xs.fromXML(getClass().getResourceAsStream("test_expense_list_response_1.xml"));
         String str = xs.toXML(response);
-        System.out.println(str);
+//        System.out.println(str);
         Expenses expenses = response.getExpenses();
         assertEquals(2, expenses.size());
         assertEquals(1, expenses.getPage());
