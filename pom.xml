@@ -4,10 +4,10 @@
 	<!-- GWT-Maven example POM without google.webtoolkit.home SET (GWT as deps) -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.freshbooks</groupId>
-	<artifactId>freshbooksApiClient</artifactId>
+	<artifactId>freshbooks-api-java-client</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
-	<name>freshbooksApiClient</name>
+	<name>freshbooks-api-java-client</name>
 	<description>Client library to access the freshbooks API from java programs</description>
 
 	<properties>
