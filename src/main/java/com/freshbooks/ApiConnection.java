@@ -61,11 +61,30 @@ public class ApiConnection {
         
     }
     
-    public ApiConnection(URL apiUrl, String key, String userAgent, TimeZone freshBooksTimeZone) {
+    public ApiConnection(URL apiUrl, String key, String userAgent) {
+      this(apiUrl,  key,  userAgent, null);
+    }
+    
+    public ApiConnection(URL apiUrl, String key, String userAgent, String freshBooksTimeZoneId) {
+      
+        //a default timezone - the right one
+        String defaultTimeZoneId = "EST5EDT";
+        
         this.url = apiUrl;
         this.key = key;
         this.userAgent = userAgent;
-        this.freshBooksTimeZone = freshBooksTimeZone;
+        
+        if (freshBooksTimeZoneId != null) {
+          try {
+            this.freshBooksTimeZone =  TimeZone.getTimeZone(freshBooksTimeZoneId);
+          }
+          catch( Exception e) {
+            this.freshBooksTimeZone = TimeZone.getTimeZone(defaultTimeZoneId);
+          }
+        }
+        else {
+          this.freshBooksTimeZone = TimeZone.getTimeZone(defaultTimeZoneId);
+        }
     }
 
     private HttpClient getClient() {

@@ -16,6 +16,7 @@ import com.freshbooks.model.Expense;
 import com.freshbooks.model.Invoice;
 import com.freshbooks.model.Item;
 import com.freshbooks.model.Payment;
+import com.freshbooks.model.Recurring;
 
 public class DumpAccount {
 
@@ -24,27 +25,38 @@ public class DumpAccount {
      * @throws ParseException 
      */
     public static void main(String[] args) throws ParseException {
-        if(args.length == 0) {
-            System.out.println("Usage: dump URL API-KEY");
-            return;
-        }
-        String url = args[0];
-        String key = args[1];
+//        if(args.length == 0) {
+//            System.out.println("Usage: dump URL API-KEY");
+//            return;
+//        }
+//        String url = args[0];
+//        String key = args[1];
+        String url = "https://caco.freshbooks.com/api/2.1/xml-in";
+        String key = "eaf296aa9640ec436485f3872d56272a";
+      
         try {
-            ApiConnection con = new ApiConnection(new URL(url), key, "FreshBooks Java API Client Test",TimeZone.getTimeZone("EST5EDT"));
+            ApiConnection con = new ApiConnection(new URL(url), key, "FreshBooks Java API Client Test");
             con.setDebug(true);
             try {
                 for(Client client : con.listClients(null, null, null)) {
                     //System.out.println("Found client "+client.getFirstName()+" "+client.getLastName()+" at "+client.getOrganization());
                     //con.getClient(client.getId());
+//                  con.deleteClient(client.getId());
                 }
                 for(Invoice invoice : con.listInvoices(null, null, null, null, null)) {
                     //System.out.println("Found invoice "+invoice.getId()+" with amount "+invoice.getAmount());
                     //con.getInvoice(invoice.getId());
+//                  con.deleteInvoice(invoice.getId());
                 }
                 for(Payment payment : con.listPayments(null, null, null, null)) {
                     //System.out.println("Found payment "+payment.getId()+" on invoice "+payment.getInvoiceId()+" with amount "+payment.getAmount());
+//                  con.deletePayment(payment.getId());
                 }
+                for(Recurring recurring: con.listRecurrings()) {
+                  //System.out.println("Found invoice "+invoice.getId()+" with amount "+invoice.getAmount());
+                  //con.getInvoice(invoice.getId());
+//                con.deleteRecurring(recurring.getId());
+              }
                 HashMap<Long,String> categoryNames = new HashMap<Long, String>();
                 for(Category category : con.listCategories()) {
                     //System.out.println("Found category "+category.getId()+": "+category.getName());
@@ -56,6 +68,7 @@ public class DumpAccount {
                 }
                 for(Item item : con.listItems(25)) {
                     //System.out.println("Found item "+item.getId()+" with name "+item.getName()+" and description "+item.getDescription());
+//                  con.deleteItem(item.getId());
                 }
             } catch(Error e) {
                 if(e.getCause() instanceof ApiException) {
