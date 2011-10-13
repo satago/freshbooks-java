@@ -140,8 +140,9 @@ public class ApiConnection {
                 
                 getClient().executeMethod(method);
                 InputStream is = method.getResponseBodyAsStream();
+                
                 if(debug) {
-                	byte[] bytes = IOUtils.toByteArray(is);
+                  byte[] bytes = IOUtils.toByteArray(is);
                     logger.info("POST "+url+":\n"+paramString
                         +"\nYields "+method.getResponseContentLength()
                         +" bytes of "+method.getResponseCharSet()+" data:\n"+
@@ -150,8 +151,11 @@ public class ApiConnection {
                 }
                 try {
                 	
+                    char[] chars = IOUtils.toCharArray(is);
+                    String str = new String(chars);
                 	  
-                    Response response = (Response) xs.fromXML(is);
+                    Response response = (Response) xs.fromXML(str);
+//                    Response response = (Response) xs.fromXML(is);
 //                    System.out.println("------BEGIN RESPONSE------");
 //                    System.out.println(xs.toXML(response));
 //                    System.out.println("-------END RESPONSE-------");
@@ -191,8 +195,8 @@ public class ApiConnection {
     }
     
     public Long createCallback(Callback callback) throws ApiException, IOException {
-		return performRequest(new Request(RequestMethod.CALLBACK_CREATE, callback)).getCallbackId();
-	}
+      return performRequest(new Request(RequestMethod.CALLBACK_CREATE, callback)).getCallbackId();
+    }
     
     public Long createPayment(Payment payment) throws ApiException, IOException {
         return performRequest(new Request(RequestMethod.PAYMENT_CREATE, payment)).getPaymentId();
@@ -276,7 +280,7 @@ public class ApiConnection {
     }
     
     /**
-     * Iterate over the payments matching the given filters, or all invoices.
+     * Iterate over the clients matching the given filters, or all invoices.
      */
     public Iterable<Client> listClients(final Integer perPage, final String username, final String email) {
         return new Iterable<Client>() {
@@ -753,5 +757,5 @@ public class ApiConnection {
         String clientViewUrl = inv.getLinks().getClientView();
         byte[] pdfBytes = PDFGrabber.getPDF(id, clientViewUrl);
         return pdfBytes;
-    }
+  }
 }
