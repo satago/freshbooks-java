@@ -21,6 +21,8 @@ public abstract class AbstractInvoiceTemplate {
   Double discount;
   String notes;
   String terms;
+  
+  
 
   @XStreamAlias("currency_code")
   String currencyCode;
@@ -52,6 +54,9 @@ public abstract class AbstractInvoiceTemplate {
 
   Double amount;
 
+  @XStreamAlias("return_uri")
+  String returnUri;
+  
   public abstract Long getId();
 
   public abstract void setId(Long id);
@@ -203,6 +208,14 @@ public abstract class AbstractInvoiceTemplate {
   public void setLanguage(String language) {
     this.language = language;
   }
+  
+  public String getReturnUri() {
+    return this.returnUri;
+  }
+  
+  public void setReturnUri(String returnUri) {
+    this.returnUri = returnUri;
+  }
 
   public boolean equals(Object obj) {
     if (this == obj)
@@ -312,6 +325,11 @@ public abstract class AbstractInvoiceTemplate {
       if (other.language != null)
         return false;
     } else if (!language.equals(other.language))
+      return false;
+    if (returnUri == null) {
+      if (other.returnUri != null)
+        return false;
+    } else if (!returnUri.equals(other.returnUri))
       return false;
 
     return true;
