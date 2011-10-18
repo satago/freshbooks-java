@@ -106,7 +106,7 @@ public class ApiConnection {
         	}
         }
         else if ( request.getMethod().equals("recurring.update") ) {
-        	if ( request.getInvoice().getLines() == null || request.getInvoice().getLines().size() == 0 ) {
+        	if ( request.getRecurring().getLines() == null || request.getRecurring().getLines().size() == 0 ) {
         		xs.omitField(Recurring.class, "lines");
         	}
         }

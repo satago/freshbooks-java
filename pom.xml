@@ -5,7 +5,7 @@
 	<groupId>com.freshbooks</groupId>
 	<artifactId>freshbooks-api-java-client</artifactId>
 	<packaging>jar</packaging>
-	<version>0.72.1</version>
+	<version>0.72.2</version>
 
 	<name>freshbooks-api-java-client</name>
 	<description>Client library to access the freshbooks API from java programs</description>
