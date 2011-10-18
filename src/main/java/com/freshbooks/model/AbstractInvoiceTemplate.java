@@ -86,6 +86,7 @@ public abstract class AbstractInvoiceTemplate {
   }
 
   public Double getDiscount() {
+    if (discount == null) return (double) 0;
     return discount;
   }
 
