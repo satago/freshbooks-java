@@ -368,6 +368,7 @@ public class ApiConnection {
         }
     }
     
+    //TODO listing invoice by poNumber and clientId
     class InvoicesIterator extends RecordsIterator<Invoice> {
 
         private InvoicesIterator(Integer perPage, Date dateFrom, Date dateTo, Long clientId, String status) throws ApiException, IOException {
