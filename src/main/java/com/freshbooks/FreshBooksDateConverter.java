@@ -116,7 +116,7 @@ public class FreshBooksDateConverter extends AbstractSingleValueConverter {
   public String toString(Object obj) {
     Date date = (Date) obj;
 
-    String str = dateWithHourFormat.format(date);
+    String str = dateWithoutHourFormat.format(date);
     
     return str;
   }
