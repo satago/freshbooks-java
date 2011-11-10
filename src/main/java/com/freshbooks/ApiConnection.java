@@ -151,14 +151,13 @@ public class ApiConnection {
                 }
                 try {
                 	
-                    char[] chars = IOUtils.toCharArray(is);
-                    String str = new String(chars);
-                	  
-                    Response response = (Response) xs.fromXML(str);
-//                    Response response = (Response) xs.fromXML(is);
-//                    System.out.println("------BEGIN RESPONSE------");
-//                    System.out.println(xs.toXML(response));
-//                    System.out.println("-------END RESPONSE-------");
+//                    char[] chars = IOUtils.toCharArray(is);
+//                    String str = new String(chars);
+//                    Response response = (Response) xs.fromXML(str);
+                    Response response = (Response) xs.fromXML(is);
+                    System.out.println("------BEGIN RESPONSE------");
+                    System.out.println(xs.toXML(response));
+                    System.out.println("-------END RESPONSE-------");
                     
                     // TODO Throw an error if we got one
 
@@ -454,9 +453,9 @@ public class ApiConnection {
     /**
      * Return a list of invoices.
      * 
-     * @param dateFrom If non-null, return only payments after that day
-     * @param dateTo If non-null, return only payments before that day
-     * @param clientId If non-null, return only payments relevant to a particular client
+     * @param dateFrom If non-null, return only invoices after that day
+     * @param dateTo If non-null, return only invoices before that day
+     * @param clientId If non-null, return only invoices relevant to a particular client
      */
     public Invoices listInvoices(int page, Integer perPage, Date dateFrom, Date dateTo, Long clientId, String status) throws ApiException, IOException {
         Request request = new Request(RequestMethod.INVOICE_LIST);
@@ -468,6 +467,9 @@ public class ApiConnection {
         request.setStatus(status);
         return performRequest(request).getInvoices();
     }
+    
+    
+    
     /**
      * Get a list of payments.
      * 
