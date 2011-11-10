@@ -232,7 +232,7 @@ public class ApiConnection {
             @Override
             public Iterator<Invoice> iterator() {
                 try {
-                    return new InvoicesIterator(perPage, dateFrom, dateTo, clientId, status);
+                    return new InvoicesIterator(perPage, dateFrom, dateTo, clientId, status, null);
                 } catch (ApiException e) {
                     throw new Error(e);
                 } catch (IOException e) {
@@ -241,6 +241,31 @@ public class ApiConnection {
             }
         };
     }
+    
+    
+    
+    /**
+     * Iterate over the invoices matching the given filters, or all invoices.
+     * 
+     * Note that the Freshbooks API only returns summaries of the invoice, not the full details
+     * of the invoice.
+     */
+    public Iterable<Invoice> listInvoices(final Integer perPage, final Date dateFrom, final Date dateTo, final Long clientId, final String status, final Long recurringId) {
+        return new Iterable<Invoice>() {
+            @Override
+            public Iterator<Invoice> iterator() {
+                try {
+                    return new InvoicesIterator(perPage, dateFrom, dateTo, clientId, status, recurringId);
+                } catch (ApiException e) {
+                    throw new Error(e);
+                } catch (IOException e) {
+                    throw new Error(e);
+                }
+            }
+        };
+    }
+    
+    
     
     /**
      * Iterate over the payments matching the given filters, or all invoices.
@@ -322,8 +347,9 @@ public class ApiConnection {
         final protected String email;
         final protected Long categoryId;
         final protected Long projectId;
+        final protected Long recurringId;
         
-        public RecordsIterator(Integer perPage, Date dateFrom, Date dateTo, Long clientId, String status, String username, String email, Long categoryId, Long projectId) throws ApiException, IOException {
+        public RecordsIterator(Integer perPage, Date dateFrom, Date dateTo, Long clientId, String status, String username, String email, Long categoryId, Long projectId, Long recurringId) throws ApiException, IOException {
             this.perPage = perPage;
             this.dateFrom = dateFrom;
             this.dateTo = dateTo;
@@ -333,6 +359,7 @@ public class ApiConnection {
             this.status = status;
             this.username = username;
             this.email = email;
+            this.recurringId = recurringId;
             this.current = list(1);
             this.currentIterator = current.iterator();
         }
@@ -367,23 +394,27 @@ public class ApiConnection {
         }
     }
     
-    //TODO listing invoice by poNumber and clientId
+    
     class InvoicesIterator extends RecordsIterator<Invoice> {
 
-        private InvoicesIterator(Integer perPage, Date dateFrom, Date dateTo, Long clientId, String status) throws ApiException, IOException {
-            super(perPage, dateFrom, dateTo, clientId, status, null, null, null, null);
+//        private InvoicesIterator(Integer perPage, Date dateFrom, Date dateTo, Long clientId, String status) throws ApiException, IOException {
+//            super(perPage, dateFrom, dateTo, clientId, status, null, null, null, null, null);
+//        }
+        
+        private InvoicesIterator(Integer perPage, Date dateFrom, Date dateTo, Long clientId, String status, Long recurringId) throws ApiException, IOException {
+            super(perPage, dateFrom, dateTo, clientId, status, null, null, null, null, recurringId);
         }
 
         @Override
         protected PagedResponseContent<Invoice> list(int page) throws ApiException, IOException {
-            return listInvoices(page, perPage, dateFrom, dateTo, clientId, status);
+            return listInvoices(page, perPage, dateFrom, dateTo, clientId, status, recurringId);
         }
     }
     
     class PaymentsIterator extends RecordsIterator<Payment> {
 
         private PaymentsIterator(Integer perPage, Date dateFrom, Date dateTo, Long clientId) throws ApiException, IOException {
-            super(perPage, dateFrom, dateTo, clientId, null, null, null, null, null);
+            super(perPage, dateFrom, dateTo, clientId, null, null, null, null, null, null);
         }
         
         @Override
@@ -394,7 +425,7 @@ public class ApiConnection {
     class ExpensesIterator extends RecordsIterator<Expense> {
 
         private ExpensesIterator(Integer perPage, Date dateFrom, Date dateTo, Long clientId, Long categoryId, Long projectId) throws ApiException, IOException {
-            super(perPage, dateFrom, dateTo, clientId, null, null, null, categoryId, projectId);
+            super(perPage, dateFrom, dateTo, clientId, null, null, null, categoryId, projectId, null);
         }
         
         @Override
@@ -405,7 +436,7 @@ public class ApiConnection {
     class ClientsIterator extends RecordsIterator<Client> {
 
         private ClientsIterator(Integer perPage, String username, String email) throws ApiException, IOException {
-            super(perPage, null, null, null, null, username, email, null, null);
+            super(perPage, null, null, null, null, username, email, null, null, null);
         }
         
         @Override
@@ -417,7 +448,7 @@ public class ApiConnection {
     class CallbacksIterator extends RecordsIterator<Callback> {
 
         private CallbacksIterator(Integer perPage) throws ApiException, IOException {
-            super(perPage, null, null, null, null, null, null, null, null);
+            super(perPage, null, null, null, null, null, null, null, null, null);
         }
         
         @Override
@@ -429,7 +460,7 @@ public class ApiConnection {
     class ItemsIterator extends RecordsIterator<Item> {
 
         private ItemsIterator(Integer perPage) throws ApiException, IOException {
-            super(perPage, null, null, null, null, null, null, null, null);
+            super(perPage, null, null, null, null, null, null, null, null, null);
         }
         
         @Override
@@ -441,7 +472,7 @@ public class ApiConnection {
     class RecurringsIterator extends RecordsIterator<Recurring> {
 
         private RecurringsIterator(Integer perPage, Long clientId) throws ApiException, IOException {
-            super(perPage, null, null, clientId, null, null, null, null, null);
+            super(perPage, null, null, clientId, null, null, null, null, null, null);
         }
         
         @Override
@@ -457,7 +488,7 @@ public class ApiConnection {
      * @param dateTo If non-null, return only invoices before that day
      * @param clientId If non-null, return only invoices relevant to a particular client
      */
-    public Invoices listInvoices(int page, Integer perPage, Date dateFrom, Date dateTo, Long clientId, String status) throws ApiException, IOException {
+    public Invoices listInvoices(int page, Integer perPage, Date dateFrom, Date dateTo, Long clientId, String status, Long recurringId) throws ApiException, IOException {
         Request request = new Request(RequestMethod.INVOICE_LIST);
         request.setPage(page);
         request.setPerPage(perPage);
@@ -465,6 +496,7 @@ public class ApiConnection {
         request.setDateTo(dateTo);
         request.setClientId(clientId);
         request.setStatus(status);
+        request.setRecurringId(recurringId);
         return performRequest(request).getInvoices();
     }
     
