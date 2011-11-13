@@ -155,9 +155,9 @@ public class ApiConnection {
 //                    String str = new String(chars);
 //                    Response response = (Response) xs.fromXML(str);
                     Response response = (Response) xs.fromXML(is);
-                    System.out.println("------BEGIN RESPONSE------");
-                    System.out.println(xs.toXML(response));
-                    System.out.println("-------END RESPONSE-------");
+//                    System.out.println("------BEGIN RESPONSE------");
+//                    System.out.println(xs.toXML(response));
+//                    System.out.println("-------END RESPONSE-------");
                     
                     // TODO Throw an error if we got one
 
