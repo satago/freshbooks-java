@@ -52,7 +52,7 @@ public class DumpAccount {
                     //System.out.println("Found payment "+payment.getId()+" on invoice "+payment.getInvoiceId()+" with amount "+payment.getAmount());
 //                  con.deletePayment(payment.getId());
                 }
-                for(Recurring recurring: con.listRecurrings()) {
+                for(Recurring recurring: con.listRecurrings(null, null)) {
                   //System.out.println("Found invoice "+invoice.getId()+" with amount "+invoice.getAmount());
                   //con.getInvoice(invoice.getId());
 //                con.deleteRecurring(recurring.getId());

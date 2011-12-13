@@ -661,9 +661,25 @@ public class ApiConnection {
         };
     }
     
-    public Recurrings listRecurrings() throws ApiException, IOException {
-        return performRequest(new Request(RequestMethod.RECURRING_LIST)).getRecurrings();
+//    public Recurrings listRecurrings() throws ApiException, IOException {
+//        return performRequest(new Request(RequestMethod.RECURRING_LIST)).getRecurrings();
+//    }
+    
+    public Iterable<Recurring> listRecurrings(final Integer perPage, final Long clientId) {
+      return new Iterable<Recurring>() {
+          @Override
+          public Iterator<Recurring> iterator() {
+              try {
+                  return new RecurringsIterator(perPage, clientId);
+              } catch (ApiException e) {
+                  throw new Error(e);
+              } catch (IOException e) {
+                  throw new Error(e);
+              }
+          }
+      };
     }
+    
     
     /**
      * Fetch the details of a client.
