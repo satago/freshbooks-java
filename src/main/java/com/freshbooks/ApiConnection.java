@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -28,6 +29,9 @@ import com.freshbooks.model.Clients;
 import com.freshbooks.model.Expense;
 import com.freshbooks.model.Expenses;
 import com.freshbooks.model.Invoice;
+import com.freshbooks.model.InvoiceLine;
+//import com.freshbooks.model.InvoiceLines;
+import com.freshbooks.model.InvoiceLines;
 import com.freshbooks.model.Invoices;
 import com.freshbooks.model.Item;
 import com.freshbooks.model.Items;
@@ -151,13 +155,15 @@ public class ApiConnection {
                 }
                 try {
                 	
-//                    char[] chars = IOUtils.toCharArray(is);
-//                    String str = new String(chars);
-//                    Response response = (Response) xs.fromXML(str);
-                    Response response = (Response) xs.fromXML(is);
-//                    System.out.println("------BEGIN RESPONSE------");
-//                    System.out.println(xs.toXML(response));
-//                    System.out.println("-------END RESPONSE-------");
+//                  Response response = (Response) xs.fromXML(is);
+                  
+                  
+                    char[] chars = IOUtils.toCharArray(is);
+                    String str = new String(chars);
+                    Response response = (Response) xs.fromXML(str);
+                    System.out.println("------BEGIN RESPONSE------");
+                    System.out.println(xs.toXML(response));
+                    System.out.println("-------END RESPONSE-------");
                     
                     // TODO Throw an error if we got one
 
@@ -848,4 +854,64 @@ public class ApiConnection {
         byte[] pdfBytes = PDFGrabber.getPDF(id, clientViewUrl);
         return pdfBytes;
   }
+	
+	
+	
+	public static void main (String[] args ) throws ApiException, IOException {
+	  
+	  
+//	  ArrayList<String> test1 = new ArrayList<String>();
+//	  InvoiceLines test2 = new InvoiceLines();
+	  
+//	  System.out.println(test1.getClass().equals(ArrayList.class));
+//	  System.out.println(test2.getClass().equals(ArrayList.class));
+	  
+//	  System.out.println(test1 instanceof InvoiceLines);
+//	  System.out.println(test2 instanceof InvoiceLines);
+
+//	  Object obj = new ArrayList<String>();
+//	  System.out.println(((ArrayList<InvoiceLine>)obj).add(new InvoiceLine()) );
+	  
+	  ApiConnection con = new ApiConnection(new URL("https://cacomarx.freshbooks.com/api/2.1/xml-in"), "ed7af999a500da95c29210aadd708c96", "");
+	  
+	  
+	  Client c = con.listClients(null, null, "amarquesferraz@gmail.com").iterator().next();
+	  
+	  Invoice invoice = new Invoice();
+	  invoice.setClientId(c.getId());
+	  
+	  InvoiceLine line1 = new InvoiceLine();
+	  line1.setName("Item 1");
+	  line1.setUnitCost(50);
+	  line1.setQuantity(2);
+	  
+	  InvoiceLine line2 = new InvoiceLine();
+    line2.setName("Item 1");
+    line2.setUnitCost(33);
+    line2.setQuantity(2);
+	  
+	  InvoiceLines lines = new InvoiceLines();
+	  lines.add(line1);
+	  lines.add(line2);
+	  
+	  invoice.setLines(lines);
+	  
+	  con.createInvoice(invoice);
+	  
+//	  
+//	  
+	  for (Invoice anInvoice : con.listInvoices(null, null, null, null, null, null, null)) {
+	    System.out.println(anInvoice.getLines().size());
+	  }
+	  
+	  
+//	    Invoice i = con.getInvoice (new Long(76234));
+//	  System.out.println(r.getPoNumber());
+//	  System.out.println(r.getLines().size());
+	  
+	  
+	  
+	}
+	
+	
 }

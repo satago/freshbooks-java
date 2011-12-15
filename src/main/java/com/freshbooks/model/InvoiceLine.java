@@ -3,6 +3,7 @@ package com.freshbooks.model;
 import java.io.Serializable;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverters;
 
 @XStreamAlias("line")
 public class InvoiceLine implements Serializable {

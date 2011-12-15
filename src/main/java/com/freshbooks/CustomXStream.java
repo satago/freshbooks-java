@@ -17,6 +17,7 @@ import com.freshbooks.model.Expense;
 import com.freshbooks.model.Expenses;
 import com.freshbooks.model.Invoice;
 import com.freshbooks.model.InvoiceLine;
+import com.freshbooks.model.InvoiceLines;
 import com.freshbooks.model.Item;
 import com.freshbooks.model.Items;
 import com.freshbooks.model.Links;
@@ -137,12 +138,169 @@ public class CustomXStream extends XStream {
     				writer.setValue(String.valueOf(c.getAmount()));
     			}
     		});
+        
+        
+        registerConverter(new Converter() {
+
+          @Override
+          public boolean canConvert(Class type) {
+            return type.equals(InvoiceLines.class);
+          }
+
+          @Override
+          public void marshal(Object source, HierarchicalStreamWriter writer,
+              MarshallingContext context) {
+            //to XML
+            InvoiceLines lines = (InvoiceLines) source;
+            for (InvoiceLine line : lines) {
+              writer.startNode("line");
+              context.convertAnother(line);
+              writer.endNode();
+            }
+            
+          }
+
+          /**
+           * Take care of null lines
+           */
+          @Override
+          public Object unmarshal(HierarchicalStreamReader reader,
+              UnmarshallingContext context) {
+            InvoiceLines lines = new InvoiceLines();
+            while (reader.hasMoreChildren()) {
+              reader.moveDown();
+              
+              InvoiceLine line  = (InvoiceLine) context.convertAnother(reader.getValue(), InvoiceLine.class);
+              if (line != null) {
+                lines.add(line);
+              }
+              
+              reader.moveUp();
+            }
+            return lines;
+          }
+          
+        });
+        
+        
+        registerConverter(new Converter() {
+          @Override
+          public boolean canConvert(Class arg0) {
+            return arg0.equals(InvoiceLine.class);
+          }
+          
+          /**
+           * Ignores empty lines
+           */
+          @Override
+          public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+            
+            InvoiceLine line = new InvoiceLine();
+            
+            while (reader.hasMoreChildren()) {
+              reader.moveDown();
+              
+              //this is SO DAMN UGLY!
+              if (reader.getNodeName().equals("name")) {
+                line.setName(reader.getValue());
+              }
+              else if (reader.getNodeName().equals("description")) {
+                line.setDescription(reader.getValue());
+              }
+              else if (reader.getNodeName().equals("amount")) {
+                line.setAmount(Double.valueOf(reader.getValue()));
+              }
+              else if (reader.getNodeName().equals("unit_cost")) {
+                line.setUnitCost(Double.valueOf(reader.getValue()));
+              }
+              else if (reader.getNodeName().equals("quantity")) {
+                line.setQuantity(Double.valueOf(reader.getValue()));
+              }
+              else if (reader.getNodeName().equals("tax1_name")) {
+                line.setTax1Name(reader.getValue());
+              }
+              else if (reader.getNodeName().equals("tax2_name")) {
+                line.setTax2Name(reader.getValue());
+              }
+              else if (reader.getNodeName().equals("tax1_percent")) {
+                line.setTax1Percent(reader.getValue());
+              }
+              else if (reader.getNodeName().equals("tax2_percent")) {
+                line.setTax2Percent(reader.getValue());
+              }
+
+              reader.moveUp();
+            }
+            
+            if (line.getAmount() == 0 && line.getName().length() == 0) {
+              return null;
+            }
+            else {
+              return line;
+            }
+            
+          }
+
+          @Override
+          public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
+            // TODO test this
+            final InvoiceLine line = (InvoiceLine)value;
+            
+            writer.startNode("name");
+            if (line.getName() != null) {
+              writer.setValue(line.getName());
+            }
+            writer.endNode();
+            
+            writer.startNode("amount");
+            if (line.getAmount() != null) {
+              writer.setValue(line.getAmount().toString());  
+            }
+            writer.endNode();
+            
+            writer.startNode("unit_cost");
+            writer.setValue(String.valueOf(line.getUnitCost()));
+            writer.endNode();
+            
+            writer.startNode("quantity");
+            writer.setValue(String.valueOf(line.getQuantity()));
+            writer.endNode();
+            
+            
+            writer.startNode("tax1_name");
+            if (line.getTax1Name() != null){
+              writer.setValue(line.getTax1Name());
+            }
+            writer.endNode();
+            
+            writer.startNode("tax2_name");
+            if (line.getTax2Name() != null) {
+              writer.setValue(line.getTax2Name());
+            }
+            writer.endNode();
+            
+            writer.startNode("tax1_percent");
+            if (line.getTax1Percent() != null) {
+              writer.setValue(line.getTax1Percent());
+            }
+            writer.endNode();
+            
+            writer.startNode("tax2_percent");
+            if (line.getTax2Percent() != null) {
+              writer.setValue(line.getTax2Percent());
+            }
+            writer.endNode();
+          }
+          
+          
+        });
         processAnnotations(new Class[] {
             Request.class,
             Response.class,
             ResponseStatus.class,
             Invoice.class,
             InvoiceLine.class,
+//            InvoiceLines.class,
             Client.class,
             Clients.class,
             Item.class,

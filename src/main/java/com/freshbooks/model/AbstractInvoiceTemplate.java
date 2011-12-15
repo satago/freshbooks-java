@@ -50,7 +50,9 @@ public abstract class AbstractInvoiceTemplate {
   @XStreamAlias("p_code")
   String code;
 
-  ArrayList<InvoiceLine> lines;
+//  @XStreamAlias("lines")
+  InvoiceLines lines;
+//  ArrayList<InvoiceLine> lines;
 
   Double amount;
 
@@ -182,13 +184,21 @@ public abstract class AbstractInvoiceTemplate {
     this.code = code;
   }
 
-  public ArrayList<InvoiceLine> getLines() {
+  public InvoiceLines getLines() {
     return lines;
   }
 
-  public void setLines(ArrayList<InvoiceLine> lines) {
+  public void setLines(InvoiceLines lines) {
     this.lines = lines;
   }
+  
+//  public ArrayList<InvoiceLine> getLines() {
+//    return lines;
+//  }
+//
+//  public void setLines(ArrayList<InvoiceLine> lines) {
+//    this.lines = lines;
+//  }
 
   public Double getAmount() {
     return amount;
