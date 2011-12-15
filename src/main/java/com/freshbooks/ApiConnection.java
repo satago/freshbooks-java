@@ -155,15 +155,15 @@ public class ApiConnection {
                 }
                 try {
                 	
-//                  Response response = (Response) xs.fromXML(is);
+                  Response response = (Response) xs.fromXML(is);
                   
                   
-                    char[] chars = IOUtils.toCharArray(is);
-                    String str = new String(chars);
-                    Response response = (Response) xs.fromXML(str);
-                    System.out.println("------BEGIN RESPONSE------");
-                    System.out.println(xs.toXML(response));
-                    System.out.println("-------END RESPONSE-------");
+//                    char[] chars = IOUtils.toCharArray(is);
+//                    String str = new String(chars);
+//                    Response response = (Response) xs.fromXML(str);
+//                    System.out.println("------BEGIN RESPONSE------");
+//                    System.out.println(xs.toXML(response));
+//                    System.out.println("-------END RESPONSE-------");
                     
                     // TODO Throw an error if we got one
 
