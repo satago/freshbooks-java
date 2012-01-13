@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -17,6 +16,7 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +29,6 @@ import com.freshbooks.model.Clients;
 import com.freshbooks.model.Expense;
 import com.freshbooks.model.Expenses;
 import com.freshbooks.model.Invoice;
-import com.freshbooks.model.InvoiceLine;
-//import com.freshbooks.model.InvoiceLines;
-import com.freshbooks.model.InvoiceLines;
 import com.freshbooks.model.Invoices;
 import com.freshbooks.model.Item;
 import com.freshbooks.model.Items;
@@ -94,6 +91,8 @@ public class ApiConnection {
     private HttpClient getClient() {
         if(client == null) {
             client = new HttpClient();
+            client.getParams().setConnectionManagerTimeout(DateUtils.MILLIS_PER_MINUTE);
+            client.getParams().setSoTimeout((int) (DateUtils.MILLIS_PER_SECOND * 90));
             client.getParams().setAuthenticationPreemptive(true);
             client.getState().setCredentials(new AuthScope(url.getHost(), 443, AuthScope.ANY_REALM), new UsernamePasswordCredentials(key, ""));
         }
@@ -848,12 +847,12 @@ public class ApiConnection {
 		performRequest(new Request(RequestMethod.RECURRING_DELETE, recurringId));
 	}
 	
-	public byte[] getInvoicePDF(Long id) throws ApiException, IOException {
-        Invoice inv = performRequest(new Request(RequestMethod.INVOICE_GET, id)).getInvoice();
-        String clientViewUrl = inv.getLinks().getClientView();
-        byte[] pdfBytes = PDFGrabber.getPDF(id, clientViewUrl);
-        return pdfBytes;
-  }
+//	public byte[] getInvoicePDF(Long id) throws ApiException, IOException {
+//        Invoice inv = performRequest(new Request(RequestMethod.INVOICE_GET, id)).getInvoice();
+//        String clientViewUrl = inv.getLinks().getClientView();
+//        byte[] pdfBytes = PDFGrabber.getPDF(id, clientViewUrl);
+//        return pdfBytes;
+//  }
 	
 	
 }
