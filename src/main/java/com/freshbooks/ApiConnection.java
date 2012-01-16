@@ -1,6 +1,5 @@
 package com.freshbooks;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -119,8 +118,8 @@ public class ApiConnection {
           localcontext = new BasicHttpContext();
           localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
 
-//          httpclient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, (int) (90 * DateUtils.MILLIS_PER_SECOND));
-//          httpclient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, (int) (90 * DateUtils.MILLIS_PER_SECOND));
+          httpclient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, (int) (90 * DateUtils.MILLIS_PER_SECOND));
+          httpclient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, (int) (90 * DateUtils.MILLIS_PER_SECOND));
             
         }
         
