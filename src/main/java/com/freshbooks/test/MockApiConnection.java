@@ -23,6 +23,10 @@ import com.thoughtworks.xstream.XStream;
 @SuppressWarnings("unchecked")
 public class MockApiConnection extends ApiConnection {
 
+    public MockApiConnection(String apiHost, String key, String userAgent) {
+      super(apiHost, key, userAgent);
+    }
+    
     Iterator<Object> expectedRequests = Collections.EMPTY_LIST.iterator();
     Iterator<Object> plannedResponses = Collections.EMPTY_LIST.iterator();
     XStream xs = new CustomXStream();

@@ -25,17 +25,13 @@ public class DumpAccount {
      * @throws ParseException 
      */
     public static void main(String[] args) throws ParseException {
-//        if(args.length == 0) {
-//            System.out.println("Usage: dump URL API-KEY");
-//            return;
-//        }
-//        String url = args[0];
-//        String key = args[1];
-        String url = "https://caco.freshbooks.com/api/2.1/xml-in";
-        String key = "eaf296aa9640ec436485f3872d56272a";
+
+        String apiHost = "cacomarx.freshbooks.com";
+        String apiKey = "apiKey";
+        String userAgent = "user agent";
       
         try {
-            ApiConnection con = new ApiConnection(new URL(url), key, "FreshBooks Java API Client Test");
+            ApiConnection con = new ApiConnection( apiHost, apiKey, userAgent);
             con.setDebug(true);
             try {
                 for(Client client : con.listClients(null, null, null)) {
@@ -81,7 +77,7 @@ public class DumpAccount {
             
             
         } catch (MalformedURLException e) {
-            System.err.println(url+" is not a valid URL ("+e.getLocalizedMessage()+")");
+            System.err.println(apiHost+" is not a valid URL ("+e.getLocalizedMessage()+")");
         } catch (ApiException e) {
             e.printStackTrace();
         } catch (IOException e) {

@@ -4,19 +4,28 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.TimeZone;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,57 +55,76 @@ import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 public class ApiConnection {
     static final Logger logger = LoggerFactory.getLogger(ApiConnection.class);
 
-    URL url;
-    String key;
+    
+    String apiHost;
+    String apiScheme;
+    String apiEntry;
+    
+    String apiKey;
     String userAgent;
-    transient HttpClient client;
+    transient DefaultHttpClient httpclient;
+    transient BasicHttpContext localcontext;
+    transient HttpHost targetHost;
+    
     boolean debug;
     
     /**
      * The time zone in which the FreshBooks servers are. 
      */
-    private TimeZone freshBooksTimeZone;
+    private TimeZone freshBooksTimeZone = TimeZone.getTimeZone("EST5EDT");
     
-    
-    protected ApiConnection() {
-        
+    public ApiConnection(String apiHost, String key, String userAgent) {
+      this(apiHost, key,  userAgent, "https", "/api/2.1/xml-in", "EST5EDT");
     }
     
-    public ApiConnection(URL apiUrl, String key, String userAgent) {
-      this(apiUrl,  key,  userAgent, null);
-    }
-    
-    public ApiConnection(URL apiUrl, String key, String userAgent, String freshBooksTimeZoneId) {
+    public ApiConnection (String apiHost, String key, String userAgent, String apiScheme, String apiEntry, String freshBooksTimeZoneId) {
       
-        //a default timezone - the right one
-        String defaultTimeZoneId = "EST5EDT";
-        
-        this.url = apiUrl;
-        this.key = key;
+        this.apiHost = apiHost;
+        this.apiKey = key;
         this.userAgent = userAgent;
+        this.apiEntry  = apiEntry;
+        this.apiScheme = apiScheme;
         
         if (freshBooksTimeZoneId != null) {
           try {
             this.freshBooksTimeZone =  TimeZone.getTimeZone(freshBooksTimeZoneId);
           }
           catch( Exception e) {
-            this.freshBooksTimeZone = TimeZone.getTimeZone(defaultTimeZoneId);
+            logger.error("Error setting custom timezone, using default [" + freshBooksTimeZone.getID() + "]");
           }
         }
-        else {
-          this.freshBooksTimeZone = TimeZone.getTimeZone(defaultTimeZoneId);
-        }
+        
     }
 
-    private HttpClient getClient() {
-        if(client == null) {
-            client = new HttpClient();
-            client.getParams().setConnectionManagerTimeout(DateUtils.MILLIS_PER_MINUTE);
-            client.getParams().setSoTimeout((int) (DateUtils.MILLIS_PER_SECOND * 90));
-            client.getParams().setAuthenticationPreemptive(true);
-            client.getState().setCredentials(new AuthScope(url.getHost(), 443, AuthScope.ANY_REALM), new UsernamePasswordCredentials(key, ""));
+    private DefaultHttpClient getClient() {
+      
+        if(httpclient == null) {
+          
+          targetHost = new HttpHost(apiHost, -1, apiScheme);
+          
+          httpclient = new DefaultHttpClient();
+          
+          httpclient.getCredentialsProvider().setCredentials(
+              new AuthScope(targetHost.getHostName(), targetHost.getPort()),
+              new UsernamePasswordCredentials(apiKey, ""));
+
+          // Create AuthCache instance
+          AuthCache authCache = new BasicAuthCache();
+          // Generate BASIC scheme object and add it to the local
+          // auth cache
+          BasicScheme basicAuth = new BasicScheme();
+          authCache.put(targetHost, basicAuth);
+
+          // Add AuthCache to the execution context
+          localcontext = new BasicHttpContext();
+          localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+
+//          httpclient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, (int) (90 * DateUtils.MILLIS_PER_SECOND));
+//          httpclient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, (int) (90 * DateUtils.MILLIS_PER_SECOND));
+            
         }
-        return client;
+        
+        return httpclient;
     }
     
     protected void checkRequestAndOmitFields(Request request, XStream xs) {
@@ -131,50 +159,43 @@ public class ApiConnection {
             
             String paramString = xs.toXML(request);
 
-            PostMethod method = new PostMethod(url.toString());
+            StringEntity dataEntity = new StringEntity(paramString);
+            HttpPost httpPost = new HttpPost(apiEntry);
+            httpPost.setEntity(dataEntity);
+            
             try {
-                method.setContentChunked(false);
-                method.setDoAuthentication(true);
-                method.setFollowRedirects(false);
-                method.addRequestHeader("User-Agent", userAgent);
-                //method.addRequestHeader("Authorization", base64key);
-                method.setRequestEntity(new StringRequestEntity(paramString, "text/xml", "utf-8"));
-                method.getParams().setContentCharset("utf-8");
                 
-                getClient().executeMethod(method);
-                InputStream is = method.getResponseBodyAsStream();
+                HttpResponse httpResponse = getClient().execute(targetHost, httpPost, localcontext);
+                HttpEntity entity = httpResponse.getEntity();
+                InputStream is = entity.getContent();
                 
                 if(debug) {
                   byte[] bytes = IOUtils.toByteArray(is);
-                    logger.info("POST "+url+":\n"+paramString
-                        +"\nYields "+method.getResponseContentLength()
-                        +" bytes of "+method.getResponseCharSet()+" data:\n"+
-                        new String(bytes, method.getResponseCharSet()));
-                    is = new ByteArrayInputStream(bytes);
+                    logger.info("POST "+this.apiScheme + this.apiHost
+                        + this.apiEntry+":\n"+paramString
+                        +"\nYields "+entity.getContentLength()
+                        +" bytes of UTF-8 data:\n"+
+                        new String(bytes,"UTF-8"));
                 }
                 try {
                 	
-                  Response response = (Response) xs.fromXML(is);
+                  Response response = (Response) xs.fromXML(EntityUtils.toString(entity));
                   
+                  // TODO Throw an error if we got one
+                  if(response.isFail()) {
+                      throw new ApiException(response.getError());
+                  }
+                  return response;
                   
-//                    char[] chars = IOUtils.toCharArray(is);
-//                    String str = new String(chars);
-//                    Response response = (Response) xs.fromXML(str);
-//                    System.out.println("------BEGIN RESPONSE------");
-//                    System.out.println(xs.toXML(response));
-//                    System.out.println("-------END RESPONSE-------");
-                    
-                    // TODO Throw an error if we got one
-
-                    if(response.isFail()) {
-                        throw new ApiException(response.getError());
-                    }
-                    return response;
                 } catch(CannotResolveClassException cnrce) {
                     throw new ApiException("Error while parsing response from FreshBooks: "+cnrce.toString()+"; response body: "+is);
                 }
+                finally {
+                  is.close();
+                }
             } finally {
-                method.releaseConnection();
+//                EntityUtils.consume(dataEntity);
+//                httpPost.releaseConnection();
             }
         } catch (MalformedURLException e) {
             throw new Error(e);
@@ -209,21 +230,13 @@ public class ApiConnection {
     public Long createRecurring(Recurring recurring) throws ApiException, IOException {
         return performRequest(new Request(RequestMethod.RECURRING_CREATE, recurring)).getRecurringId();
     }
-    
-    public URL getUrl() {
-        return url;
-    }
-
-    public void setUrl(URL apiUrl) {
-        this.url = apiUrl;
-    }
 
     public String getKey() {
-        return key;
+        return apiKey;
     }
 
     public void setKey(String key) {
-        this.key = key;
+        this.apiKey = key;
     }
     
     /**
@@ -853,6 +866,5 @@ public class ApiConnection {
 //        byte[] pdfBytes = PDFGrabber.getPDF(id, clientViewUrl);
 //        return pdfBytes;
 //  }
-	
 	
 }
