@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.freshbooks</groupId>
 	<artifactId>freshbooks-api-java-client</artifactId>
-	<packaging>jar</packaging>
-	<version>0.77</version>
+	<packaging>maven-plugin</packaging>
+	<version>0.77.1</version>
 
 	<name>freshbooks-api-java-client</name>
 	<description>Client library to access the freshbooks API from java programs</description>
@@ -53,11 +53,11 @@
 	
 	<dependencies>
 	
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.3</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>commons-codec</groupId> -->
+<!-- 			<artifactId>commons-codec</artifactId> -->
+<!-- 			<version>1.3</version> -->
+<!-- 		</dependency> -->
 		
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -69,7 +69,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.0.1</version>
+			<version>3.1</version>
 		</dependency>
 		
 		<dependency>
@@ -90,7 +90,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.7</version>
+			<version>4.10</version>
 		</dependency>
 		
 		<dependency>
@@ -98,20 +98,13 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.2-alpha1</version>
 		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.slf4j</groupId> -->
+<!-- 			<artifactId>integration</artifactId> -->
+<!-- 			<version>1.6.4</version> -->
+<!-- 		</dependency> -->
 	</dependencies>
 	
-	
-  
-  <distributionManagement>
-    <repository>
-      <id>releases</id>
-      <url>http://repository.jusbrasil.com.br/content/repositories/releases</url>
-    </repository>
-    <snapshotRepository>
-      <id>snapshots</id>
-      <url>http://repository.jusbrasil.com.br/content/repositories/snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
 	
 	<!--   do not rely of default platform encoding -->
   <properties>
