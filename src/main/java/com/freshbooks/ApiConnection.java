@@ -1,8 +1,5 @@
 package com.freshbooks;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -19,7 +16,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.entity.StringEntity;
@@ -85,6 +81,7 @@ public class ApiConnection {
     
     public ApiConnection (String apiHost, String key, String userAgent, String apiScheme, String apiEntry, String freshBooksTimeZoneId) {
       
+        
         this.apiHost = apiHost;
         this.apiKey = key;
         this.userAgent = userAgent;
@@ -99,6 +96,8 @@ public class ApiConnection {
             logger.error("Error setting custom timezone, using default [" + freshBooksTimeZone.getID() + "]");
           }
         }
+        
+        logger.info("A new ApiConnection is created");
         
     }
 
@@ -128,6 +127,8 @@ public class ApiConnection {
           httpclient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, (int) (90 * DateUtils.MILLIS_PER_SECOND));
           httpclient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, (int) (90 * DateUtils.MILLIS_PER_SECOND));
             
+          logger.info("Default HttpClient created");
+          
         }
         
         return httpclient;
@@ -200,6 +201,7 @@ public class ApiConnection {
                 finally {
                   is.close();
                 }
+                
             } finally {
 //                EntityUtils.consume(dataEntity);
 //                httpPost.releaseConnection();
@@ -258,10 +260,13 @@ public class ApiConnection {
             public Iterator<Invoice> iterator() {
                 try {
                     return new InvoicesIterator(perPage, dateFrom, dateTo, clientId, status, null, null);
-                } catch (ApiException e) {
-                    throw new Error(e);
+                }
+                catch (ApiException e) {
+                  logger.error("An ApiException error has ocurred.", e);
+                  throw new Error(e);
                 } catch (IOException e) {
-                    throw new Error(e);
+                  logger.error("An IOException error has ocurred.", e);
+                  throw new Error(e);
                 }
             }
         };
@@ -281,10 +286,13 @@ public class ApiConnection {
             public Iterator<Invoice> iterator() {
                 try {
                     return new InvoicesIterator(perPage, dateFrom, dateTo, clientId, status, recurringId, null);
-                } catch (ApiException e) {
-                    throw new Error(e);
+                }
+                catch (ApiException e) {
+                  logger.error("An ApiException error has ocurred.", e);
+                  throw new Error(e);
                 } catch (IOException e) {
-                    throw new Error(e);
+                  logger.error("An IOException error has ocurred.", e);
+                  throw new Error(e);
                 }
             }
         };
@@ -303,10 +311,13 @@ public class ApiConnection {
             public Iterator<Invoice> iterator() {
                 try {
                     return new InvoicesIterator(perPage, dateFrom, dateTo, clientId, status, recurringId, invoiceNumber);
-                } catch (ApiException e) {
-                    throw new Error(e);
+                }
+                catch (ApiException e) {
+                  logger.error("An ApiException error has ocurred.", e);
+                  throw new Error(e);
                 } catch (IOException e) {
-                    throw new Error(e);
+                  logger.error("An IOException error has ocurred.", e);
+                  throw new Error(e);
                 }
             }
         };
@@ -323,10 +334,13 @@ public class ApiConnection {
             public Iterator<Payment> iterator() {
                 try {
                     return new PaymentsIterator(perPage, dateFrom, dateTo, clientId);
-                } catch (ApiException e) {
-                    throw new Error(e);
+                }
+                catch (ApiException e) {
+                  logger.error("An ApiException error has ocurred.", e);
+                  throw new Error(e);
                 } catch (IOException e) {
-                    throw new Error(e);
+                  logger.error("An IOException error has ocurred.", e);
+                  throw new Error(e);
                 }
             }
         };
@@ -341,10 +355,13 @@ public class ApiConnection {
             public Iterator<Expense> iterator() {
                 try {
                     return new ExpensesIterator(perPage, dateFrom, dateTo, clientId, categoryId, projectId);
-                } catch (ApiException e) {
-                    throw new Error(e);
+                }
+                catch (ApiException e) {
+                  logger.error("An ApiException error has ocurred.", e);
+                  throw new Error(e);
                 } catch (IOException e) {
-                    throw new Error(e);
+                  logger.error("An IOException error has ocurred.", e);
+                  throw new Error(e);
                 }
             }
         };
@@ -359,10 +376,13 @@ public class ApiConnection {
             public Iterator<Client> iterator() {
                 try {
                     return new ClientsIterator(perPage, username, email);
-                } catch (ApiException e) {
-                    throw new Error(e);
+                }
+                catch (ApiException e) {
+                  logger.error("An ApiException error has ocurred.", e);
+                  throw new Error(e);
                 } catch (IOException e) {
-                    throw new Error(e);
+                  logger.error("An IOException error has ocurred.", e);
+                  throw new Error(e);
                 }
             }
         };
@@ -374,10 +394,13 @@ public class ApiConnection {
             public Iterator<Item> iterator() {
                 try {
                     return new ItemsIterator(perPage);
-                } catch (ApiException e) {
-                    throw new Error(e);
+                }
+                catch (ApiException e) {
+                  logger.error("An ApiException error has ocurred.", e);
+                  throw new Error(e);
                 } catch (IOException e) {
-                    throw new Error(e);
+                  logger.error("An IOException error has ocurred.", e);
+                  throw new Error(e);
                 }
             }
         };
@@ -427,11 +450,15 @@ public class ApiConnection {
                     throw new NoSuchElementException();
                 try {
                     current = list(current.getPage()+1);
-                } catch (ApiException e) {
-                    throw new NoSuchElementException(e.getLocalizedMessage());
-                } catch (IOException e) {
-                    throw new NoSuchElementException(e.getLocalizedMessage());
                 }
+                catch (ApiException e) {
+                  logger.error("An ApiException error has ocurred.", e);
+                  throw new NoSuchElementException(e.getLocalizedMessage());
+                } catch (IOException e) {
+                  logger.error("An IOException error has ocurred.", e);
+                  throw new NoSuchElementException(e.getLocalizedMessage());
+                }
+                
                 currentIterator = current.iterator();
             }
             return currentIterator.next();
@@ -677,10 +704,13 @@ public class ApiConnection {
             public Iterator<Callback> iterator() {
                 try {
                     return new CallbacksIterator(perPage);
-                } catch (ApiException e) {
-                    throw new Error(e);
+                }
+                catch (ApiException e) {
+                  logger.error("An ApiException error has ocurred.", e);
+                  throw new Error(e);
                 } catch (IOException e) {
-                    throw new Error(e);
+                  logger.error("An IOException error has ocurred.", e);
+                  throw new Error(e);
                 }
             }
         };
@@ -696,10 +726,13 @@ public class ApiConnection {
           public Iterator<Recurring> iterator() {
               try {
                   return new RecurringsIterator(perPage, clientId);
-              } catch (ApiException e) {
-                  throw new Error(e);
+              }
+              catch (ApiException e) {
+                logger.error("An ApiException error has ocurred.", e);
+                throw new Error(e);
               } catch (IOException e) {
-                  throw new Error(e);
+                logger.error("An IOException error has ocurred.", e);
+                throw new Error(e);
               }
           }
       };
