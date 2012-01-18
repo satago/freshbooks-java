@@ -29,6 +29,7 @@ import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -164,7 +165,7 @@ public class ApiConnection {
             
             String paramString = xs.toXML(request);
 
-            StringEntity dataEntity = new StringEntity(paramString);
+            StringEntity dataEntity = new StringEntity(paramString, HTTP.UTF_8);
             HttpPost httpPost = new HttpPost(apiEntry);
             httpPost.setEntity(dataEntity);
             httpPost.setHeader("Content-Type","application/xml;charset=UTF-8");
