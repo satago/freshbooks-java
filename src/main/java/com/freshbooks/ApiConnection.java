@@ -1,5 +1,8 @@
 package com.freshbooks;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -16,14 +19,17 @@ import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,8 +67,8 @@ public class ApiConnection {
     
     String apiKey;
     String userAgent;
-    transient DefaultHttpClient httpclient;
-    transient BasicHttpContext localcontext;
+    transient AbstractHttpClient httpclient;
+    transient HttpContext localcontext;
     transient HttpHost targetHost;
     
     boolean debug;
@@ -95,7 +101,7 @@ public class ApiConnection {
         
     }
 
-    private DefaultHttpClient getClient() {
+    private AbstractHttpClient getClient() {
       
         if(httpclient == null) {
           
@@ -161,6 +167,7 @@ public class ApiConnection {
             StringEntity dataEntity = new StringEntity(paramString);
             HttpPost httpPost = new HttpPost(apiEntry);
             httpPost.setEntity(dataEntity);
+            httpPost.setHeader("Content-Type","application/xml;charset=UTF-8");
             
             try {
                 
@@ -865,5 +872,20 @@ public class ApiConnection {
 //        byte[] pdfBytes = PDFGrabber.getPDF(id, clientViewUrl);
 //        return pdfBytes;
 //  }
+	
+	
+//	public static void main(String[] args) throws FileNotFoundException {
+//	  XStream xs = new CustomXStream();
+//	  String fileName = "/home/caco/logs/output2.xml";
+//	  
+//	  FileInputStream file = new FileInputStream(new File(fileName));
+//	  
+//	  
+//	  Response response = (Response) xs.fromXML(file);
+//	  
+//	  System.out.println("ok");
+//  }
+	
+	
 	
 }
