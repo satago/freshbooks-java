@@ -259,6 +259,7 @@ public class ApiConnection {
             @Override
             public Iterator<Invoice> iterator() {
                 try {
+                    logger.info("Returning Invoices iterator");
                     return new InvoicesIterator(perPage, dateFrom, dateTo, clientId, status, null, null);
                 }
                 catch (ApiException e) {
