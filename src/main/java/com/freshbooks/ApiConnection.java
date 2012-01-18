@@ -28,8 +28,9 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.commons.logging.Log; 
+import org.apache.commons.logging.LogFactory; 
 
 import com.freshbooks.model.Callback;
 import com.freshbooks.model.Callbacks;
@@ -55,9 +56,9 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 
 public class ApiConnection {
-    static final Logger logger = LoggerFactory.getLogger(ApiConnection.class);
+  
+    static final Log logger = LogFactory.getLog(ApiConnection.class);
 
-    
     String apiHost;
     String apiScheme;
     String apiEntry;
