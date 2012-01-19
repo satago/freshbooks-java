@@ -98,7 +98,7 @@ public class ApiConnection {
           }
         }
         
-        logger.info("A new ApiConnection is created");
+        logger.debug("A new ApiConnection is created");
         
     }
 
@@ -128,7 +128,7 @@ public class ApiConnection {
           httpclient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, (int) (90 * DateUtils.MILLIS_PER_SECOND));
           httpclient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, (int) (90 * DateUtils.MILLIS_PER_SECOND));
             
-          logger.info("Default HttpClient created");
+          logger.debug("Default HttpClient created");
           
         }
         
@@ -160,27 +160,32 @@ public class ApiConnection {
      * @throws Error
      */
     protected Response performRequest(Request request) throws ApiException, IOException {
-        try {
+//        try {
+            logger.debug("XStream object created");
             XStream xs = new CustomXStream(this.freshBooksTimeZone);
             
             checkRequestAndOmitFields(request, xs);
             
             String paramString = xs.toXML(request);
+            logger.debug("Parsed request XML");
 
             StringEntity dataEntity = new StringEntity(paramString, HTTP.UTF_8);
             HttpPost httpPost = new HttpPost(apiEntry);
             httpPost.setEntity(dataEntity);
             httpPost.setHeader("Content-Type","application/xml;charset=UTF-8");
             
-            try {
+//            try {
                 
+                logger.debug("Executing request and fetching response");
                 HttpResponse httpResponse = getClient().execute(targetHost, httpPost, localcontext);
+                logger.debug("Response string fetched");
                 HttpEntity entity = httpResponse.getEntity();
+                logger.debug("HttpEntity grabbed");
                 InputStream is = entity.getContent();
                 
                 if(debug) {
                   byte[] bytes = IOUtils.toByteArray(is);
-                    logger.info("POST "+this.apiScheme + this.apiHost
+                    logger.debug("POST "+this.apiScheme + this.apiHost
                         + this.apiEntry+":\n"+paramString
                         +"\nYields "+entity.getContentLength()
                         +" bytes of UTF-8 data:\n"+
@@ -192,8 +197,11 @@ public class ApiConnection {
                   
                   // TODO Throw an error if we got one
                   if(response.isFail()) {
+                      logger.warn("Response is a fail!");
                       throw new ApiException(response.getError());
                   }
+                  
+                  logger.debug("Response object created");
                   return response;
                   
                 } catch(CannotResolveClassException cnrce) {
@@ -203,13 +211,13 @@ public class ApiConnection {
                   is.close();
                 }
                 
-            } finally {
+//            } finally {
 //                EntityUtils.consume(dataEntity);
 //                httpPost.releaseConnection();
-            }
-        } catch (MalformedURLException e) {
-            throw new Error(e);
-        }
+//            }
+//        } catch (MalformedURLException e) {
+//            throw new Error(e);
+//        }
     }
     
     /**
@@ -260,11 +268,11 @@ public class ApiConnection {
             @Override
             public Iterator<Invoice> iterator() {
                 try {
-                    logger.info("Returning Invoices iterator");
+                    logger.debug("Returning Invoices iterator");
                     return new InvoicesIterator(perPage, dateFrom, dateTo, clientId, status, null, null);
                 }
                 catch (ApiException e) {
-                  logger.error("An ApiException error has ocurred.", e);
+                  logger.error("An ApiException error has occurred.", e);
                   throw new Error(e);
                 } catch (IOException e) {
                   logger.error("An IOException error has ocurred.", e);
@@ -435,6 +443,9 @@ public class ApiConnection {
             this.recurringId = recurringId;
             this.number = invoiceNumber;
             this.current = list(1);
+            
+            logger.debug("RecordsIterator values set");
+            
             this.currentIterator = current.iterator();
         }
 

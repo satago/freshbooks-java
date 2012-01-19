@@ -5,11 +5,20 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.freshbooks.ApiConnection;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 public class PagedResponseContent<T> implements Iterable<T> {
+  
+    @XStreamOmitField
+    static final Log logger = LogFactory.getLog(ApiConnection.class);
+  
     @XStreamAsAttribute
     int page;
     @XStreamAsAttribute
@@ -79,7 +88,9 @@ public class PagedResponseContent<T> implements Iterable<T> {
     }
 
     public Iterator<T> iterator() {
+        
         if(contents == null) {
+            logger.debug("Content is null, returning empty list iterator");
             List<T> emptyList = Collections.emptyList();
             return emptyList.iterator();
         }
