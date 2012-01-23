@@ -53,11 +53,11 @@
 
 	<dependencies>
 
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.0.1</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>commons-io</groupId> -->
+<!-- 			<artifactId>commons-io</artifactId> -->
+<!-- 			<version>2.0.1</version> -->
+<!-- 		</dependency> -->
 
 
 		<dependency>
@@ -92,17 +92,6 @@
 			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
-	
-	<distributionManagement>
-    <repository>
-      <id>releases</id>
-      <url>http://repository.jusbrasil.com.br/content/repositories/releases</url>
-    </repository>
-    <snapshotRepository>
-      <id>snapshots</id>
-      <url>http://repository.jusbrasil.com.br/content/repositories/snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
 	
 	
 	<!-- do not rely of default platform encoding -->
