@@ -1,15 +1,14 @@
 package com.freshbooks;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.TimeZone;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -28,9 +27,6 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-
-import org.apache.commons.logging.Log; 
-import org.apache.commons.logging.LogFactory; 
 
 import com.freshbooks.model.Callback;
 import com.freshbooks.model.Callbacks;
@@ -107,13 +103,12 @@ public class ApiConnection {
         if(httpclient == null) {
           
           targetHost = new HttpHost(apiHost, -1, apiScheme);
-          
           httpclient = new DefaultHttpClient();
           
           httpclient.getCredentialsProvider().setCredentials(
               new AuthScope(targetHost.getHostName(), targetHost.getPort()),
               new UsernamePasswordCredentials(apiKey, ""));
-
+          
           // Create AuthCache instance
           AuthCache authCache = new BasicAuthCache();
           // Generate BASIC scheme object and add it to the local
@@ -160,64 +155,53 @@ public class ApiConnection {
      * @throws Error
      */
     protected Response performRequest(Request request) throws ApiException, IOException {
-//        try {
-            logger.debug("XStream object created");
-            XStream xs = new CustomXStream(this.freshBooksTimeZone);
-            
-            checkRequestAndOmitFields(request, xs);
-            
-            String paramString = xs.toXML(request);
-            logger.debug("Parsed request XML");
+      
+      logger.debug("XStream object created");
+      XStream xs = new CustomXStream(this.freshBooksTimeZone);
+      
+      checkRequestAndOmitFields(request, xs);
+      
+      String paramString = xs.toXML(request);
+      logger.debug("Parsed request XML");
 
-            StringEntity dataEntity = new StringEntity(paramString, HTTP.UTF_8);
-            HttpPost httpPost = new HttpPost(apiEntry);
-            httpPost.setEntity(dataEntity);
-            httpPost.setHeader("Content-Type","application/xml;charset=UTF-8");
+      StringEntity dataEntity = new StringEntity(paramString, HTTP.UTF_8);
+      HttpPost httpPost = new HttpPost(apiEntry);
+      httpPost.setEntity(dataEntity);
+      httpPost.setHeader("Content-Type","application/xml;charset=UTF-8");
             
-//            try {
-                
-                logger.debug("Executing request and fetching response");
-                HttpResponse httpResponse = getClient().execute(targetHost, httpPost, localcontext);
-                logger.debug("Response string fetched");
-                HttpEntity entity = httpResponse.getEntity();
-                logger.debug("HttpEntity grabbed");
-                InputStream is = entity.getContent();
-                
-                if(debug) {
-                  byte[] bytes = IOUtils.toByteArray(is);
-                    logger.debug("POST "+this.apiScheme + this.apiHost
-                        + this.apiEntry+":\n"+paramString
-                        +"\nYields "+entity.getContentLength()
-                        +" bytes of UTF-8 data:\n"+
-                        new String(bytes,"UTF-8"));
-                }
-                try {
-                	
-                  Response response = (Response) xs.fromXML(EntityUtils.toString(entity));
-                  
-                  // TODO Throw an error if we got one
-                  if(response.isFail()) {
-                      logger.warn("Response is a fail!");
-                      throw new ApiException(response.getError());
-                  }
-                  
-                  logger.debug("Response object created");
-                  return response;
-                  
-                } catch(CannotResolveClassException cnrce) {
-                    throw new ApiException("Error while parsing response from FreshBooks: "+cnrce.toString()+"; response body: "+is);
-                }
-                finally {
-                  is.close();
-                }
-                
-//            } finally {
-//                EntityUtils.consume(dataEntity);
-//                httpPost.releaseConnection();
-//            }
-//        } catch (MalformedURLException e) {
-//            throw new Error(e);
-//        }
+      logger.debug("Executing request and fetching response");
+      HttpResponse httpResponse = getClient().execute(targetHost, httpPost, localcontext);
+      logger.debug("Response string fetched");
+      HttpEntity entity = httpResponse.getEntity();
+      
+      logger.debug("HttpEntity grabbed");
+      String responseBody = EntityUtils.toString(entity);
+      logger.debug("Entity parsed as string data");
+      
+      if(debug) {
+        byte[] bytes = responseBody.getBytes();
+          logger.debug("POST "+this.apiScheme + this.apiHost
+              + this.apiEntry+":\n"+paramString
+              +"\nYields "+entity.getContentLength()
+              +" bytes of UTF-8 data:\n"+
+              new String(bytes,"UTF-8"));
+      }
+      try {
+      	
+        Response response = (Response) xs.fromXML(responseBody);
+        logger.debug("Response object created");
+        
+        // TODO Throw an error if we got one
+        if(response.isFail()) {
+            logger.warn("Response is a fail!");
+            throw new ApiException(response.getError());
+        }
+        
+        return response;
+        
+      } catch(CannotResolveClassException cnrce) {
+          throw new ApiException("Error while parsing response from FreshBooks: "+cnrce.toString()+"; response body: "+responseBody);
+      }
     }
     
     /**
