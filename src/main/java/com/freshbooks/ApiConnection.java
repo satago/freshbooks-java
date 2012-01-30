@@ -61,6 +61,9 @@ public class ApiConnection {
 
   String apiKey;
   String userAgent;
+  
+  int maxRetries = 3;
+  
   transient AbstractHttpClient httpclient;
   transient HttpContext localcontext;
   transient HttpHost targetHost;
@@ -176,8 +179,32 @@ public class ApiConnection {
     httpPost.setHeader("Content-Type", "application/xml;charset=UTF-8");
 
     logger.debug("Executing request and fetching response");
-    HttpResponse httpResponse = getClient().execute(targetHost, httpPost,
-        localcontext);
+    
+    
+    HttpResponse httpResponse = null;
+    int attempts = 0;
+    IOException e = null;
+    while (attempts < maxRetries ) {
+      logger.info("Attempt #" + (attempts=1));
+      
+      try {
+        httpResponse = getClient().execute(targetHost, httpPost,
+            localcontext);
+      }
+      catch( IOException ioe ) {
+        e = ioe;
+        logger.error("An IOException happened: "+ ioe.getMessage(), ioe);
+        logger.info ("Trying again.");
+      }
+      finally {
+        attempts++;
+      }
+    }
+    
+    if (httpResponse == null){
+      throw e;
+    }
+    
     logger.debug("Response string fetched");
     HttpEntity entity = httpResponse.getEntity();
 
@@ -320,11 +347,16 @@ public class ApiConnection {
    * 
    * Note that the Freshbooks API only returns summaries of the invoice, not the
    * full details of the invoice.
+   * @throws IOException 
+   * @throws ApiException 
    */
   public Iterable<Invoice> listInvoices(final Integer perPage,
       final Date dateFrom, final Date dateTo, final Long clientId,
-      final String status, final Long recurringId, final String invoiceNumber) {
+      final String status, final Long recurringId, final String invoiceNumber)
+      throws IOException {
+
     return new Iterable<Invoice>() {
+
       @Override
       public Iterator<Invoice> iterator() {
         try {
@@ -340,14 +372,40 @@ public class ApiConnection {
           throw new Error(e);
         }
       }
+
     };
+
   }
+      
+    
+    
+  
+//  public Iterable<Invoice> listInvoices(final Integer perPage,
+//    final Date dateFrom, final Date dateTo, final Long clientId,
+//    final String status, final Long recurringId, final String invoiceNumber) throws IOException, ApiException {
+//  
+//    Iterator<Invoice> invoiceIterator = new InvoicesIterator(perPage, dateFrom,
+//        dateTo, clientId, status, recurringId, invoiceNumber);
+//    
+//    AbstractFreshbooksIterable<Invoice> iterable = new AbstractFreshbooksIterable<Invoice>() {
+//      @Override
+//      public Iterator<Invoice> iterator() {
+//        return this.it;
+//      }
+//    };
+//    
+//    iterable.setIterator(invoiceIterator);
+//    
+//    return iterable;
+//    
+//}
 
   /**
    * Iterate over the payments matching the given filters, or all invoices.
    */
   public Iterable<Payment> listPayments(final Integer perPage,
       final Date dateFrom, final Date dateTo, final Long clientId) {
+    
     return new Iterable<Payment>() {
       @Override
       public Iterator<Payment> iterator() {
@@ -800,10 +858,6 @@ public class ApiConnection {
     };
   }
 
-  // public Recurrings listRecurrings() throws ApiException, IOException {
-  // return performRequest(new
-  // Request(RequestMethod.RECURRING_LIST)).getRecurrings();
-  // }
 
   public Iterable<Recurring> listRecurrings(final Integer perPage,
       final Long clientId) {
