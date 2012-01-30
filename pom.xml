@@ -5,7 +5,7 @@
 	<groupId>com.freshbooks</groupId>
 	<artifactId>freshbooks-api-java-client</artifactId>
 	<packaging>jar</packaging>
-	<version>0.77.6</version>
+	<version>0.77.7</version>
 
 	<name>freshbooks-api-java-client</name>
 	<description>Client library to access the freshbooks API from java programs</description>
@@ -94,6 +94,7 @@
 	</dependencies>
 	
 	
+  
 	<!-- do not rely of default platform encoding -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
