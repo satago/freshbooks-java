@@ -184,9 +184,7 @@ public class ApiConnection {
     HttpResponse httpResponse = null;
     int attempts = 0;
     IOException e = null;
-    while (attempts < maxRetries ) {
-      logger.info("Attempt #" + (attempts=1));
-      
+    while (attempts < maxRetries && httpResponse == null) {
       try {
         httpResponse = getClient().execute(targetHost, httpPost,
             localcontext);
@@ -194,7 +192,7 @@ public class ApiConnection {
       catch( IOException ioe ) {
         e = ioe;
         logger.error("An IOException happened: "+ ioe.getMessage(), ioe);
-        logger.info ("Trying again.");
+        logger.info("Attempt #" + (attempts+1));
       }
       finally {
         attempts++;
