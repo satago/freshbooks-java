@@ -5,7 +5,7 @@
 	<groupId>com.freshbooks</groupId>
 	<artifactId>freshbooks-api-java-client</artifactId>
 	<packaging>jar</packaging>
-	<version>0.77.8</version>
+	<version>0.77.9</version>
 
 	<name>freshbooks-api-java-client</name>
 	<description>Client library to access the freshbooks API from java programs</description>
@@ -80,19 +80,21 @@
 			<version>4.10</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.2-alpha1</version>
-		</dependency>
 
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-	</dependencies>
 
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpclient</artifactId>
+		<version>4.1.2</version>
+	</dependency>
+            
+	</dependencies>
+	
   
 	<!-- do not rely of default platform encoding -->
 	<properties>
