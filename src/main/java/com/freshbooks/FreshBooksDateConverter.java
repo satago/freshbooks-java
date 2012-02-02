@@ -63,13 +63,13 @@ public class FreshBooksDateConverter extends AbstractSingleValueConverter {
    * The default date format, with hour and seconds.
    */
   private ThreadSafeSimpleDateFormat dateWithHourFormat = new ThreadSafeSimpleDateFormat(
-      DATE_FORMAT_WITH_HOUR, this.freshBooksTimeZone, 4, 20, true);
+      DATE_FORMAT_WITH_HOUR,  4, 20, true);
 
   /**
    * The default date format, with date only.
    */
   private ThreadSafeSimpleDateFormat dateWithoutHourFormat = new ThreadSafeSimpleDateFormat(
-      DATE_FORMAT_WITHOUT_HOUR, this.freshBooksTimeZone, 4, 20, true);
+      DATE_FORMAT_WITHOUT_HOUR,  4, 20, true);
 
   /**
    * The class this class can marshall to XML data.
