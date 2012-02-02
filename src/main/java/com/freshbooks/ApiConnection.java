@@ -17,12 +17,15 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
@@ -106,12 +109,13 @@ public class ApiConnection {
     if (httpclient == null) {
 
       targetHost = new HttpHost(apiHost, -1, apiScheme);
-      httpclient = new DefaultHttpClient();
+      httpclient = new DefaultHttpClient(new ThreadSafeClientConnManager());
+      
 
       httpclient.getCredentialsProvider().setCredentials(
           new AuthScope(targetHost.getHostName(), targetHost.getPort()),
           new UsernamePasswordCredentials(apiKey, ""));
-
+      
       // Create AuthCache instance
       AuthCache authCache = new BasicAuthCache();
       // Generate BASIC scheme object and add it to the local
@@ -209,6 +213,8 @@ public class ApiConnection {
     logger.debug("HttpEntity grabbed");
     String responseBody = EntityUtils.toString(entity);
     logger.debug("Entity parsed as string data");
+//    EntityUtils.consume(entity);
+//    logger.debug("Entity fully consumed.");
 
     if (debug) {
       byte[] bytes = responseBody.getBytes();
