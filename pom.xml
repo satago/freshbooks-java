@@ -5,7 +5,7 @@
 	<groupId>com.freshbooks</groupId>
 	<artifactId>freshbooks-api-java-client</artifactId>
 	<packaging>jar</packaging>
-	<version>0.77.9</version>
+	<version>0.77.10</version>
 
 	<name>freshbooks-api-java-client</name>
 	<description>Client library to access the freshbooks API from java programs</description>
@@ -53,26 +53,12 @@
 
 	<dependencies>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>commons-io</groupId> -->
-<!-- 			<artifactId>commons-io</artifactId> -->
-<!-- 			<version>2.0.1</version> -->
-<!-- 		</dependency> -->
-
-
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.1</version>
 		</dependency>
 
-		<dependency>
-			<!-- Does not work with versions > 1.3 right now, need to figure that 
-				out -->
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-			<version>1.3</version>
-		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -92,11 +78,16 @@
 		<artifactId>httpclient</artifactId>
 		<version>4.1.2</version>
 	</dependency>
+
+	<dependency>
+		<groupId>com.thoughtworks.xstream</groupId>
+		<artifactId>xstream</artifactId>
+		<version>1.4.2</version>
+	</dependency>
             
 	</dependencies>
-	
-  
-	<!-- do not rely of default platform encoding -->
+
+	<!-- do not rely of platform default encoding -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

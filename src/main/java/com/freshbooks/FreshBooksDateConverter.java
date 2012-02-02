@@ -58,19 +58,18 @@ public class FreshBooksDateConverter extends AbstractSingleValueConverter {
 //    this.systemTimeZone    = Calendar.getInstance().getTimeZone();
     this.freshBooksTimeZone = freshBooksTimeZone; 
   }
-  
-  
+
   /**
    * The default date format, with hour and seconds.
    */
-  private ThreadSafeSimpleDateFormat dateWithHourFormat =
-      new ThreadSafeSimpleDateFormat(DATE_FORMAT_WITH_HOUR, 4, 20, true);
+  private ThreadSafeSimpleDateFormat dateWithHourFormat = new ThreadSafeSimpleDateFormat(
+      DATE_FORMAT_WITH_HOUR, this.freshBooksTimeZone, 4, 20, true);
 
   /**
    * The default date format, with date only.
    */
-  private ThreadSafeSimpleDateFormat dateWithoutHourFormat =
-      new ThreadSafeSimpleDateFormat(DATE_FORMAT_WITHOUT_HOUR, 4, 20, true);
+  private ThreadSafeSimpleDateFormat dateWithoutHourFormat = new ThreadSafeSimpleDateFormat(
+      DATE_FORMAT_WITHOUT_HOUR, this.freshBooksTimeZone, 4, 20, true);
 
   /**
    * The class this class can marshall to XML data.
@@ -139,17 +138,6 @@ public class FreshBooksDateConverter extends AbstractSingleValueConverter {
     return  ( Calendar.getInstance().getTimeZone().getOffset(time)
         - this.freshBooksTimeZone.getOffset(time) )/1000;
   }
-  
-  /**
-   * Converts a Date at the system time zone to a date at the FreshBooks
-   * time zone. 
-   * @param date the date at system's time zone.
-   * @return the date at the FreshBooks' time zone. 
-   */
-//  public Date toFreshBooksTime(Date date) {
-////    return DateUtils.addSeconds(date, -this.systemSecondsBehindFBServer());
-//    return date;
-//  }
   
   /**
    * Converts a Date at the FreshBooks' time zone to a date at the system's  
