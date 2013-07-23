@@ -32,6 +32,9 @@ public class Request extends Message {
     @XStreamAlias("message")
     String emailMessage;
     
+    @XStreamAlias("number")
+    String invoiceNumber;
+    
     public Request() {
     }
 
@@ -195,6 +198,14 @@ public class Request extends Message {
 
     public void setDateTo(Date dateTo) {
         this.dateTo = dateTo;
+    }
+
+    public String getInvoiceNumber() {
+      return invoiceNumber;
+    }
+
+    public void setInvoiceNumber(String invoiceNumber) {
+      this.invoiceNumber = invoiceNumber;
     }    
     
     

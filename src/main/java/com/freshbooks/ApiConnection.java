@@ -17,7 +17,6 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.AbstractHttpClient;
@@ -25,7 +24,6 @@ import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
@@ -588,7 +586,8 @@ public class ApiConnection {
     protected PagedResponseContent<Invoice> list(int page) throws ApiException,
         IOException {
       return listInvoices(page, perPage, dateFrom, dateTo, clientId, status,
-          recurringId);
+          recurringId, number);
+      
     }
   }
 
@@ -691,7 +690,7 @@ public class ApiConnection {
    *          If non-null, return only invoices relevant to a particular client
    */
   public Invoices listInvoices(int page, Integer perPage, Date dateFrom,
-      Date dateTo, Long clientId, String status, Long recurringId)
+      Date dateTo, Long clientId, String status, Long recurringId, String invoiceNumber)
       throws ApiException, IOException {
     Request request = new Request(RequestMethod.INVOICE_LIST);
     request.setPage(page);
@@ -701,6 +700,7 @@ public class ApiConnection {
     request.setClientId(clientId);
     request.setStatus(status);
     request.setRecurringId(recurringId);
+    request.setInvoiceNumber(invoiceNumber);
     return performRequest(request).getInvoices();
   }
 

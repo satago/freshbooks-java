@@ -32,7 +32,7 @@ public class ClientAgingReport implements Serializable {
 		double balance90plus = 0;
 		
 		int page = 1;
-		Iterator<Invoice> list = api.listInvoices(page, 100, null, null, clientId, "unpaid", null).iterator();
+		Iterator<Invoice> list = api.listInvoices(page, 100, null, null, clientId, "unpaid", null, null).iterator();
 		while ( true ) {
 			int c = 0;
 			while ( list.hasNext() ) {
@@ -54,7 +54,7 @@ public class ClientAgingReport implements Serializable {
 			}
 			if ( c >= 100 ) {
 				page++;
-				list = api.listInvoices(page, 100, null, null, clientId, "unpaid", null).iterator();
+				list = api.listInvoices(page, 100, null, null, clientId, "unpaid", null, null).iterator();
 			}
 			else {
 				break;
