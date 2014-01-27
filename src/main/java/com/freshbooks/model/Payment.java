@@ -27,6 +27,10 @@ public class Payment implements Serializable {
     
     String notes;
 
+    @XStreamAlias("updated")
+    private
+    Date updatedAt;
+
     public Long getId() {
         return id;
     }
@@ -139,6 +143,14 @@ public class Payment implements Serializable {
         } else if (!type.equals(other.type))
             return false;
         return true;
+    }
+
+    public Date getUpdatedAt() {
+      return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+      this.updatedAt = updatedAt;
     }
     
 }
