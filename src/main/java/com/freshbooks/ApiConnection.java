@@ -1,6 +1,8 @@
 package com.freshbooks;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
@@ -9,6 +11,9 @@ import java.util.NoSuchElementException;
 import java.util.TimeZone;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -21,13 +26,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.AbstractHttpClient;
@@ -120,27 +125,40 @@ public class ApiConnection {
    * @return
    */
   public static AbstractHttpClient wrapClient(AbstractHttpClient base) {
+
+    X509HostnameVerifier verifier = new X509HostnameVerifier() {
+
+      @Override
+      public boolean verify(String arg0, SSLSession arg1) {
+        return true;
+      }
+
+      @Override
+      public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {}
+      @Override
+      public void verify(String host, X509Certificate cert) throws SSLException {}
+      @Override
+      public void verify(String host, SSLSocket ssl) throws IOException {}
+    };
+
     try {
-        SSLContext ctx = SSLContext.getInstance("TLS");
-        X509TrustManager tm = new X509TrustManager() {
-            public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException { }
+      SSLContext sslCtx = SSLContext.getInstance("SSL");
+      sslCtx.init(null, new TrustManager[]{new TrustedServer()}, null);
+      SSLSocketFactory ssf = new SSLSocketFactory(sslCtx, verifier);
 
-            public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException { }
+      ClientConnectionManager ccm = base.getConnectionManager();
+      SchemeRegistry sr = ccm.getSchemeRegistry();
+      sr.register(new Scheme("https", 443, ssf));
+      return new DefaultHttpClient(ccm, base.getParams());
 
-            public X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-        };
-        ctx.init(null, new TrustManager[]{tm}, null);
-        SSLSocketFactory ssf = new SSLSocketFactory(ctx);
-        ssf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        ClientConnectionManager ccm = base.getConnectionManager();
-        SchemeRegistry sr = ccm.getSchemeRegistry();
-        sr.register(new Scheme("https", ssf, 443));
-        return new DefaultHttpClient(ccm, base.getParams());
-    } catch (Exception ex) {
-        return null;
+    } catch (KeyManagementException e) {
+      logger.fatal("Could not create wrapped SSL Client", e);
+    } catch (NoSuchAlgorithmException e) {
+      logger.fatal("Could not create wrapped SSL Client", e);
     }
+
+    // at least I tried :(
+    return base;
   }
 
   private AbstractHttpClient getClient() {
@@ -1118,5 +1136,34 @@ public class ApiConnection {
   //
   // System.out.println("ok");
   // }
+
+}
+
+class TrustedServer implements TrustManager, X509TrustManager {
+
+  @Override
+  public void checkClientTrusted(X509Certificate[] chain, String authType)
+    throws CertificateException {
+    return;
+  }
+
+  @Override
+  public void checkServerTrusted(X509Certificate[] chain, String authType)
+    throws CertificateException {
+    return;
+  }
+
+  @Override
+  public X509Certificate[] getAcceptedIssuers() {
+    return null;
+  }
+
+  public boolean isServerTrusted(java.security.cert.X509Certificate[] certs) {
+      return true;
+  }
+
+  public boolean isClientTrusted(java.security.cert.X509Certificate[] certs) {
+    return true;
+  }
 
 }
