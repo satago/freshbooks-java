@@ -1,10 +1,16 @@
 package com.freshbooks;
 
 import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.TimeZone;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
@@ -15,8 +21,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.AbstractHttpClient;
@@ -102,13 +113,43 @@ public class ApiConnection {
 
   }
 
+  /**
+   * Ignores certificate errors.
+   * Source: http://tech.chitgoks.com/2011/04/24/how-to-avoid-javax-net-ssl-sslpeerunverifiedexception-peer-not-authenticated-problem-using-apache-httpclient/
+   * @param base
+   * @return
+   */
+  public static AbstractHttpClient wrapClient(AbstractHttpClient base) {
+    try {
+        SSLContext ctx = SSLContext.getInstance("TLS");
+        X509TrustManager tm = new X509TrustManager() {
+            public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException { }
+
+            public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException { }
+
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+        };
+        ctx.init(null, new TrustManager[]{tm}, null);
+        SSLSocketFactory ssf = new SSLSocketFactory(ctx);
+        ssf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        ClientConnectionManager ccm = base.getConnectionManager();
+        SchemeRegistry sr = ccm.getSchemeRegistry();
+        sr.register(new Scheme("https", ssf, 443));
+        return new DefaultHttpClient(ccm, base.getParams());
+    } catch (Exception ex) {
+        return null;
+    }
+  }
+
   private AbstractHttpClient getClient() {
 
     if (httpclient == null) {
 
       targetHost = new HttpHost(apiHost, -1, apiScheme);
       httpclient = new DefaultHttpClient(new ThreadSafeClientConnManager());
-      
+      httpclient = wrapClient(httpclient);
 
       httpclient.getCredentialsProvider().setCredentials(
           new AuthScope(targetHost.getHostName(), targetHost.getPort()),
