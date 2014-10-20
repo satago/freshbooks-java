@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Built-By: caco
-Build-Jdk: 1.6.0_22
+Build-Jdk: 1.7.0_65
+Built-By: mihailkovachev
 Created-By: Maven Integration for Eclipse
 

@@ -59,6 +59,11 @@ public class Client implements Serializable {
     @XStreamAlias("s_code")
     String secondaryCode;
     
+    @Deprecated
+    String url;
+
+    @Deprecated
+    String credit;
     Links links;
     
     List<Credit> credits;
