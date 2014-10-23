@@ -36,7 +36,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.converters.basic.BooleanConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer;
+import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 import com.thoughtworks.xstream.io.xml.XppDriver;
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
@@ -60,8 +60,8 @@ public class CustomXStream extends XStream {
      * @param freshBooksTimeZone the FreshBooks time zone (default "EST5EDT")
      */
     public CustomXStream(TimeZone freshBooksTimeZone) {
-        super(null, new XppDriver(new XmlFriendlyReplacer("::", "_")));
-        
+        // super(null, new XppDriver(new XmlFriendlyReplacer("::", "_")));
+        super(null, new XppDriver(new XmlFriendlyNameCoder("::", "_")));
         registerConverter(BooleanConverter.BINARY);
         
         registerConverter(new FreshBooksDateConverter(freshBooksTimeZone));
