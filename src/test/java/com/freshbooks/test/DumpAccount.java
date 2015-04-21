@@ -8,8 +8,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 
+import org.scribe.builder.ServiceBuilder;
+import org.scribe.builder.api.Api;
+import org.scribe.builder.api.DefaultApi10a;
+import org.scribe.model.OAuthConfig;
+import org.scribe.model.SignatureType;
+import org.scribe.model.Token;
+import org.scribe.oauth.OAuth10aServiceImpl;
+import org.scribe.services.PlaintextSignatureService;
+import org.scribe.services.SignatureService;
+
 import com.freshbooks.ApiConnection;
 import com.freshbooks.ApiException;
+import com.freshbooks.OAuthApiConnection;
 import com.freshbooks.model.Category;
 import com.freshbooks.model.Client;
 import com.freshbooks.model.Expense;
@@ -26,13 +37,60 @@ public class DumpAccount {
      */
     public static void main(String[] args) throws ParseException {
 
-        String apiHost = args[1] + ".freshbooks.com";
-        String apiKey = args[2];
-        String userAgent = args[1];
+        String apiHost = "https://satago" + ".freshbooks.com/api/2.1/xml-in";
+        String apiKey = "";
+        String apiSecret = "";
+        String userAgent = "satago";
       
+
+        ServiceBuilder br = new ServiceBuilder();
+
+        Api api = new DefaultApi10a()
+        {
+
+            @Override
+            public SignatureService getSignatureService()
+            {
+                return new PlaintextSignatureService();
+            }
+
+            private String getBaseUrl()
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.append("https://")
+                        .append("satago")
+                        .append(".freshbooks.com/oauth");
+
+                return builder.toString();
+            }
+            @Override
+            public String getRequestTokenEndpoint()
+            {
+
+                return getBaseUrl() + "/oauth_request.php";
+            }
+
+            @Override
+            public String getAccessTokenEndpoint()
+            {
+                return getBaseUrl() + "/oauth_access.php";
+            }
+
+            @Override
+            public String getAuthorizationUrl(Token requestToken)
+            {
+                return getBaseUrl() + "/oauth_authorize.php?"
+                        + "oauth_token=" + requestToken.getToken();
+            }
+        };
+
+        br.apiKey("consumer_key").apiSecret("consumer_secret").provider(api);
+
+        OAuth10aServiceImpl service = (OAuth10aServiceImpl) br.build();
         try {
-            ApiConnection con = new ApiConnection( apiHost, apiKey, userAgent);
+            OAuthApiConnection con = new OAuthApiConnection(service, new Token(apiKey, apiSecret), apiHost, userAgent);
             con.setDebug(true);
+
             try {
                 for(Client client : con.listClients(null, null, null)) {
                     System.out.println("Found client " + client.getFirstName() + " " + client.getLastName() + " at "
@@ -40,7 +98,10 @@ public class DumpAccount {
                     //con.getClient(client.getId());
 //                  con.deleteClient(client.getId());
                 }
-                for(Invoice invoice : con.listInvoices(null, null, null, null, null)) {
+                System.out.println("Invoices");
+                for (Invoice invoice : con.listInvoices(25, new Date(2013, 5, 23, 0, 0), null, null, null))
+                {
+
                     System.out.println("Found invoice " + invoice.getId() + " with amount " + invoice.getAmount());
                    // invoice.
                     //con.getInvoice(invoice.getId());
