@@ -1,49 +1,15 @@
 package com.freshbooks;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.TimeZone;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.AuthCache;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 
 import com.freshbooks.model.Callback;
 import com.freshbooks.model.Callbacks;
@@ -66,7 +32,6 @@ import com.freshbooks.model.Request;
 import com.freshbooks.model.RequestMethod;
 import com.freshbooks.model.Response;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 
 public abstract class AbstractApiConnection
 {
@@ -421,7 +386,16 @@ public abstract class AbstractApiConnection
 
       logger.debug("RecordsIterator values set");
 
-      this.currentIterator = current.iterator();
+            if (current == null)
+            {
+                logger.warn("List was null in " + getClass().getName());
+                List<T> emptyList = Collections.emptyList();
+                this.currentIterator = emptyList.iterator();
+            }
+            else
+            {
+                this.currentIterator = current.iterator();
+            }
     }
 
     protected abstract PagedResponseContent<T> list(int page)
