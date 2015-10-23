@@ -83,6 +83,8 @@ public class OAuthApiConnection extends AbstractApiConnection
         }
 
         Response response = (Response) xs.fromXML(resp.getBody());
+        logger.debug("REQUEST: " + req.toString() + " PAYLOAD: " + paramString + " RESPONSE HEADERS: " + resp.getHeaders()
+                + " RESPONSE BODY: " + resp.getBody());
 
         if (!resp.isSuccessful())
         {
