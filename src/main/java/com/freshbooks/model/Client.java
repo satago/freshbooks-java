@@ -68,6 +68,8 @@ public class Client implements Serializable {
     
     List<Credit> credits;
     
+    boolean deleted = false;
+
     public String getFirstName() {
         return firstName;
     }
@@ -373,4 +375,14 @@ public class Client implements Serializable {
 	public void setCredits(List<Credit> credits) {
 		this.credits = credits;
 	}
+
+    public boolean isDeleted()
+    {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted)
+    {
+        this.deleted = deleted;
+    }
 }

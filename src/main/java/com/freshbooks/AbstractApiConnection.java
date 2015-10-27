@@ -36,6 +36,7 @@ import com.thoughtworks.xstream.XStream;
 public abstract class AbstractApiConnection
 {
 
+    private static final int CLIENT_DELETED_CODE = 50010;
   static final Log logger = LogFactory.getLog(ApiConnection.class);
 
   String apiHost;
@@ -751,13 +752,21 @@ public abstract class AbstractApiConnection
     };
   }
 
-  /**
-   * Fetch the details of a client.
-   */
-  public Client getClient(Long id) throws ApiException, IOException {
-    return performRequest(new Request(RequestMethod.CLIENT_GET, id))
-        .getClient();
-  }
+    /**
+     * Fetch the details of a client.
+     */
+    public Client getClient(Long id) throws ApiException, IOException
+    {
+        Response response = performRequest(new Request(RequestMethod.CLIENT_GET, id));
+
+        if (response.isFail() && response.getCode().equals(CLIENT_DELETED_CODE))
+        {
+            Client client = new Client();
+            client.setDeleted(true);
+            return client;
+        }
+        return response.getClient();
+    }
 
   /**
    * Fetch the details of an item.

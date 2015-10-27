@@ -10,6 +10,8 @@ public class Response extends Message {
     
     String error;
     
+    Integer code;
+
     public Response() {
     }
     public Response(Clients clients) {
@@ -64,4 +66,16 @@ public class Response extends Message {
         return status == ResponseStatus.fail;
     }
 
+    /**
+     * Freshbooks internal error code, do not confuse with HTTP codes.
+     */
+    public Integer getCode()
+    {
+        return code;
+    }
+
+    public void setCode(Integer code)
+    {
+        this.code = code;
+    }
 }
