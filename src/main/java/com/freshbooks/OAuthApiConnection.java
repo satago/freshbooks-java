@@ -23,8 +23,6 @@ public class OAuthApiConnection extends AbstractApiConnection
 
     private Token token;
     private String url;
-    private boolean debug;
-    private int MAX_RETRIES = 3;
     private long lastRequestTime = 0;
 
     /**
@@ -82,7 +80,6 @@ public class OAuthApiConnection extends AbstractApiConnection
             }
         }
 
-        Response response = (Response) xs.fromXML(resp.getBody());
         logger.debug("REQUEST: " + req.toString() + " PAYLOAD: " + paramString + " RESPONSE HEADERS: " + resp.getHeaders()
                 + " RESPONSE BODY: " + resp.getBody());
 
@@ -92,7 +89,16 @@ public class OAuthApiConnection extends AbstractApiConnection
                     String.format("Code: %s, Message: %s, Body: %s", resp.getCode(), resp.getMessage(), resp.getBody()));
         }
 
-        return response;
+        Response fbResponse = (Response) xs.fromXML(resp.getBody());
+
+        if (fbResponse.isFail() && !ErrorCodes.HANDLED_CODES.contains(fbResponse.getCode()))
+        {
+            String message = String.format("freshbooks error code: %s, Message: %s, Body: %s", fbResponse.getCode(), fbResponse.getError(),
+                    resp.getBody());
+            throw new FreshBooksException(message);
+        }
+
+        return fbResponse;
     }
 
     private void spaceoutRequests()

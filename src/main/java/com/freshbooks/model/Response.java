@@ -8,9 +8,9 @@ public class Response extends Message {
     @XStreamAsAttribute
     ResponseStatus status;
     
-    String error;
+    private String error;
     
-    Integer code;
+    private Integer code;
 
     public Response() {
     }

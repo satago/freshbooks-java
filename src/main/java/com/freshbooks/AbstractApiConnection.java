@@ -35,8 +35,6 @@ import com.thoughtworks.xstream.XStream;
 
 public abstract class AbstractApiConnection
 {
-
-    private static final int CLIENT_DELETED_CODE = 50010;
   static final Log logger = LogFactory.getLog(ApiConnection.class);
 
   String apiHost;
@@ -759,7 +757,7 @@ public abstract class AbstractApiConnection
     {
         Response response = performRequest(new Request(RequestMethod.CLIENT_GET, id));
 
-        if (response.isFail() && response.getCode().equals(CLIENT_DELETED_CODE))
+        if (response.isFail() && response.getCode().equals(ErrorCodes.CLIENT_DELETED))
         {
             Client client = new Client();
             client.setDeleted(true);
